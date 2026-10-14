@@ -60,6 +60,32 @@ export const ctaPropsSchema = z.object({
   primary: linkSchema,
 })
 
+export const portfolioGridPropsSchema = z.object({
+  heading: text(120),
+  limit: z.number().int().min(3).max(24),
+  service_id: z.uuid().nullable(),
+})
+
+export const clientLogosPropsSchema = z.object({
+  heading: text(120),
+})
+
+export const testimonialsPropsSchema = z.object({
+  heading: text(120),
+  limit: z.number().int().min(1).max(12),
+})
+
+export const faqPropsSchema = z.object({
+  heading: text(120),
+  group: text(60),
+})
+
+export const formPropsSchema = z.object({
+  heading: text(120),
+  intro: text(300),
+  form_key: z.string().trim().min(1, 'Choose a form').max(40),
+})
+
 export const blockSchemas = {
   hero: heroPropsSchema,
   rich_text: richTextPropsSchema,
@@ -69,6 +95,11 @@ export const blockSchemas = {
   latest_articles: latestArticlesPropsSchema,
   stats: statsPropsSchema,
   cta: ctaPropsSchema,
+  portfolio_grid: portfolioGridPropsSchema,
+  client_logos: clientLogosPropsSchema,
+  testimonials: testimonialsPropsSchema,
+  faq: faqPropsSchema,
+  form: formPropsSchema,
 } as const
 
 export type BlockType = keyof typeof blockSchemas
@@ -88,6 +119,11 @@ export const blockSchema = z.discriminatedUnion('type', [
   z.object({ ...blockBase, type: z.literal('latest_articles'), props: latestArticlesPropsSchema }),
   z.object({ ...blockBase, type: z.literal('stats'), props: statsPropsSchema }),
   z.object({ ...blockBase, type: z.literal('cta'), props: ctaPropsSchema }),
+  z.object({ ...blockBase, type: z.literal('portfolio_grid'), props: portfolioGridPropsSchema }),
+  z.object({ ...blockBase, type: z.literal('client_logos'), props: clientLogosPropsSchema }),
+  z.object({ ...blockBase, type: z.literal('testimonials'), props: testimonialsPropsSchema }),
+  z.object({ ...blockBase, type: z.literal('faq'), props: faqPropsSchema }),
+  z.object({ ...blockBase, type: z.literal('form'), props: formPropsSchema }),
 ])
 
 export type BlockInput = z.infer<typeof blockSchema>

@@ -88,6 +88,7 @@ export interface DashboardStats {
   newSubmissions: number
   submissions30d: number
   mediaFiles: number
+  latestSubmissions: SubmissionListItem[]
 }
 
 export interface MfaFactor {
@@ -224,11 +225,69 @@ export interface PricingGroup {
   features: PricingFeature[]
 }
 
+export interface PortfolioItem {
+  id: string
+  title: string
+  externalUrl: string
+  thumbnail: MediaAsset
+  service: { id: string, name: string, slug: string } | null
+}
+
+export interface ClientLogo {
+  id: string
+  name: string
+  url: string
+  logo: MediaAsset
+}
+
+export interface Testimonial {
+  id: string
+  authorName: string
+  authorRole: string
+  company: string
+  quote: string
+  rating: number | null
+  avatar: MediaAsset | null
+}
+
+export interface Faq {
+  id: string
+  question: string
+  answer: string
+  group: string
+}
+
+export interface FormFieldDef {
+  id: string
+  name: string
+  label: string
+  type: string
+  placeholder: string
+  helpText: string
+  options: { label: string, value: string }[]
+  required: boolean
+  validation: { min?: number, max?: number }
+  width: 'full' | 'half'
+}
+
+export interface PublicForm {
+  key: string
+  name: string
+  submitLabel: string
+  successMessage: string
+  fields: FormFieldDef[]
+}
+
 export interface BlockData {
   media: Record<string, MediaAsset>
   services: ServiceCard[]
   pricing: PricingGroup[]
   articles: Record<string, ArticleSummary[]>
+  portfolio: Record<string, PortfolioItem[]>
+  logos: ClientLogo[]
+  testimonials: Testimonial[]
+  faqs: Faq[]
+  forms: Record<string, PublicForm>
 }
 
 export interface PublicPage {
@@ -274,4 +333,61 @@ export interface AdminService extends ServiceCard {
   isActive: boolean
   pageId: string | null
   planCount: number
+}
+
+export interface AdminPortfolioItem extends PortfolioItem {
+  isActive: boolean
+}
+
+export interface AdminClientLogo extends ClientLogo {
+  isActive: boolean
+}
+
+export interface AdminTestimonial extends Testimonial {
+  isActive: boolean
+}
+
+export interface AdminFaq extends Faq {
+  isActive: boolean
+}
+
+export interface AdminForm extends PublicForm {
+  id: string
+  notifyEmails: string[]
+  submissionCount: number
+}
+
+export interface SubmissionListItem {
+  id: string
+  formKey: string
+  formName: string
+  name: string
+  email: string
+  status: 'new' | 'contacted' | 'won' | 'lost' | 'spam'
+  createdAt: string
+}
+
+export interface SubmissionDetail extends SubmissionListItem {
+  data: Record<string, unknown>
+  note: string
+  serviceSlug: string
+  planSlug: string
+  sourcePath: string
+  userAgent: string
+  fields: FormFieldDef[]
+  updatedAt: string
+}
+
+export interface SubmissionCounts {
+  new: number
+  contacted: number
+  won: number
+  lost: number
+  spam: number
+  allButSpam: number
+}
+
+export interface PortfolioPageData {
+  items: PortfolioItem[]
+  services: { id: string, name: string, slug: string }[]
 }

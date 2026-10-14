@@ -435,14 +435,14 @@ isOneToOne: false
                   ]
                 },"submissions": {
                   Row: {
-                    "created_at": string,"data": NonNullable<Json>,"email": string,"form_id": string,"id": string,"ip_hash": string,"name": string,"note": string,"source_path": string,"status": string,"updated_at": string,"user_agent": string
+                    "created_at": string,"data": NonNullable<Json>,"email": string,"form_id": string,"id": string,"ip_hash": string,"name": string,"note": string,"plan_slug": string,"service_slug": string,"source_path": string,"status": string,"updated_at": string,"user_agent": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"data": NonNullable<Json>,"email"?: string,"form_id": string,"id"?: string,"ip_hash"?: string,"name"?: string,"note"?: string,"source_path"?: string,"status"?: string,"updated_at"?: string,"user_agent"?: string
+                    "created_at"?: string,"data": NonNullable<Json>,"email"?: string,"form_id": string,"id"?: string,"ip_hash"?: string,"name"?: string,"note"?: string,"plan_slug"?: string,"service_slug"?: string,"source_path"?: string,"status"?: string,"updated_at"?: string,"user_agent"?: string
                   }
                   Update: {
-                    "created_at"?: string,"data"?: NonNullable<Json>,"email"?: string,"form_id"?: string,"id"?: string,"ip_hash"?: string,"name"?: string,"note"?: string,"source_path"?: string,"status"?: string,"updated_at"?: string,"user_agent"?: string
+                    "created_at"?: string,"data"?: NonNullable<Json>,"email"?: string,"form_id"?: string,"id"?: string,"ip_hash"?: string,"name"?: string,"note"?: string,"plan_slug"?: string,"service_slug"?: string,"source_path"?: string,"status"?: string,"updated_at"?: string,"user_agent"?: string
                   }
                   Relationships: [
                     {
@@ -492,6 +492,14 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"v_submission_counts": {
+                  Row: {
+                    "all_but_spam": number | null,"contacted": number | null,"lost": number | null,"new": number | null,"spam": number | null,"won": number | null
+                  }
+                  ComputedFields: never
+                  Relationships: [
+                    
+                  ]
                 }
           }
           Functions: {
@@ -528,6 +536,9 @@ isOneToOne: false
         isOneToOne: false
         isSetofReturn: true
       } },
+"fn_reorder":
+{ Args: { "p_ids": (string)[],"p_table": string }; Returns: undefined
+                           },
 "fn_search_articles":
 { Args: { "p_limit"?: number,"p_offset"?: number,"p_query": string }; Returns: {
               "id": string,"rank": number,"total_count": number

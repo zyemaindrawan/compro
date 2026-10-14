@@ -70,7 +70,10 @@ select pg_temp.add_blocks((select id from public.pages where kind = 'home'), '[
       {"value": "9", "label": "Years in business"},
       {"value": "4.8/5", "label": "Average client rating"},
       {"value": "< 1 day", "label": "First reply to a brief"}]}},
+  {"type": "client_logos", "props": {"heading": "Teams we have shipped for"}},
+  {"type": "testimonials", "props": {"heading": "What clients say after launch", "limit": 3}},
   {"type": "latest_articles", "props": {"heading": "From the blog", "limit": 3, "category_slug": ""}},
+  {"type": "faq", "props": {"heading": "Questions we hear before every project", "group": ""}},
   {"type": "cta", "props": {
     "heading": "Have a project in mind?",
     "body": "Send a short brief. You get a scoped estimate within two business days.",
@@ -105,7 +108,7 @@ with page as (
 select pg_temp.add_blocks((select id from page), '[
   {"type": "rich_text", "props": {
     "content_json": {"type": "doc", "content": []},
-    "content_html": "<h2>Privacy Policy</h2><p>This template must be reviewed by your legal adviser before launch.</p><h3>What we collect</h3><p>When you send the contact or quotation form we store the details you enter, a hash of your IP address and your browser name, so we can reply and block abuse.</p><h3>Analytics</h3><p>We use Umami to count visits. It does not set cookies and does not collect personal data.</p><h3>How long we keep it</h3><p>Form submissions are kept for 24 months, then deleted.</p><h3>Your rights</h3><p>Email us to see, correct or delete the data we hold about you.</p>"}}
+    "content_html": "<h2>Privacy Policy</h2><p>This template must be reviewed by your legal adviser before launch.</p><h3>What we collect</h3><p>When you send the contact or quotation form we store the details you enter, a hash of your IP address and your browser name, so we can reply and block abuse.</p><h3>Analytics</h3><p>We use Umami to count visits. It does not set cookies and does not collect personal data.</p><h3>How long we keep it</h3><p>We keep form submissions until you ask us to delete them or we no longer need them to answer your request.</p><h3>Your rights</h3><p>Email us to see, correct or delete the data we hold about you.</p>"}}
 ]'::jsonb);
 
 do $$
@@ -187,3 +190,17 @@ select pg_temp.add_pricing('cloud-solutions',
     {"label": "Monitoring and alerts", "group": "Operations", "values": ["cross", "check", "check"]},
     {"label": "Security patches", "group": "Operations", "values": ["cross", "cross", "check"]},
     {"label": "On-call hours", "group": "Operations", "values": ["cross", "cross", "Business hours"]}]');
+
+insert into public.testimonials (author_name, author_role, company, quote, rating, position) values
+  ('Dewi Lestari', 'Operations Manager', 'Logistics company, Surabaya', 'Our drivers used to call the office for every delivery change. The field app syncs when they get signal and the calls stopped in the first month.', 5, 0),
+  ('Andre Wijaya', 'Founder', 'B2B marketplace', 'They told us which features to cut from the first release. We launched six weeks earlier and the cut features were never missed.', 5, 1),
+  ('Siti Rahmawati', 'Finance Lead', 'Manufacturing group', 'Purchase approvals went from email threads to one screen. Month-end closing now takes two days instead of five.', 5, 2),
+  ('Michael Tan', 'CTO', 'Retail chain', 'The cloud review paid for itself in the first invoice. We now get a short cost report every month.', 4, 3);
+
+insert into public.faqs (question, answer, group_label, position) values
+  ('How long does a typical project take?', 'A marketing site takes 3 to 6 weeks. Web apps and Android apps usually ship a first release in 8 to 16 weeks. We agree on dates after the discovery week.', 'Process', 0),
+  ('Do you sign an NDA?', 'Yes. Send yours or use ours before the first call.', 'Process', 1),
+  ('Who owns the code?', 'You do. The repository is in your organisation from day one and the licence transfers on final payment.', 'Ownership', 2),
+  ('Can you take over an existing project?', 'Often, yes. We start with a paid code review of one to two weeks and tell you honestly whether to continue, refactor or rebuild.', 'Process', 3),
+  ('How do payments work?', 'Fixed-scope projects are paid in three parts: 40 percent at kickoff, 40 percent at beta, 20 percent at launch. Retainers are billed monthly.', 'Pricing', 4),
+  ('What happens after launch?', 'Every plan includes a support period. After that you can move to a monthly retainer or call us when you need changes.', 'Support', 5);

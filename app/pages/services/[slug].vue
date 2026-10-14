@@ -10,7 +10,7 @@ const { data: preview } = await useFetch(() => `/api/admin/pages/${previewId.val
 const page = computed(() => (previewId.value ? preview.value : data.value?.page) ?? null)
 
 const service = computed(() => data.value!.service)
-const fallbackData = computed<BlockData>(() => ({ media: {}, services: [], pricing: data.value?.pricing ? [data.value.pricing] : [], articles: {} }))
+const fallbackData = computed<BlockData>(() => emptyBlockData({ pricing: data.value?.pricing ? [data.value.pricing] : [] }))
 
 useBlockPageSeo(page, {
   previewing: Boolean(previewId.value),
