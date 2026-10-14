@@ -77,17 +77,23 @@ isOneToOne: false
                   ]
                 },"articles": {
                   Row: {
-                    "canonical_url": string,"content_html": string,"content_json": NonNullable<Json>,"cover_media_id": string | null,"created_at": string,"excerpt": string,"id": string,"meta_description": string,"meta_keywords": (string)[],"meta_title": string,"noindex": boolean,"og_media_id": string | null,"published_at": string | null,"reading_minutes": number,"search": unknown,"slug": string,"status": string,"title": string,"updated_at": string,"updated_by": string | null
+                    "author_id": string | null,"canonical_url": string,"content_html": string,"content_json": NonNullable<Json>,"cover_media_id": string | null,"created_at": string,"excerpt": string,"id": string,"meta_description": string,"meta_keywords": (string)[],"meta_title": string,"noindex": boolean,"og_media_id": string | null,"published_at": string | null,"reading_minutes": number,"search": unknown,"slug": string,"status": string,"title": string,"updated_at": string,"updated_by": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "canonical_url"?: string,"content_html"?: string,"content_json"?: NonNullable<Json>,"cover_media_id"?: string | null,"created_at"?: string,"excerpt"?: string,"id"?: string,"meta_description"?: string,"meta_keywords"?: (string)[],"meta_title"?: string,"noindex"?: boolean,"og_media_id"?: string | null,"published_at"?: string | null,"reading_minutes"?: number,"search"?: never,"slug": string,"status"?: string,"title": string,"updated_at"?: string,"updated_by"?: string | null
+                    "author_id"?: string | null,"canonical_url"?: string,"content_html"?: string,"content_json"?: NonNullable<Json>,"cover_media_id"?: string | null,"created_at"?: string,"excerpt"?: string,"id"?: string,"meta_description"?: string,"meta_keywords"?: (string)[],"meta_title"?: string,"noindex"?: boolean,"og_media_id"?: string | null,"published_at"?: string | null,"reading_minutes"?: number,"search"?: never,"slug": string,"status"?: string,"title": string,"updated_at"?: string,"updated_by"?: string | null
                   }
                   Update: {
-                    "canonical_url"?: string,"content_html"?: string,"content_json"?: NonNullable<Json>,"cover_media_id"?: string | null,"created_at"?: string,"excerpt"?: string,"id"?: string,"meta_description"?: string,"meta_keywords"?: (string)[],"meta_title"?: string,"noindex"?: boolean,"og_media_id"?: string | null,"published_at"?: string | null,"reading_minutes"?: number,"search"?: never,"slug"?: string,"status"?: string,"title"?: string,"updated_at"?: string,"updated_by"?: string | null
+                    "author_id"?: string | null,"canonical_url"?: string,"content_html"?: string,"content_json"?: NonNullable<Json>,"cover_media_id"?: string | null,"created_at"?: string,"excerpt"?: string,"id"?: string,"meta_description"?: string,"meta_keywords"?: (string)[],"meta_title"?: string,"noindex"?: boolean,"og_media_id"?: string | null,"published_at"?: string | null,"reading_minutes"?: number,"search"?: never,"slug"?: string,"status"?: string,"title"?: string,"updated_at"?: string,"updated_by"?: string | null
                   }
                   Relationships: [
                     {
+      foreignKeyName: "articles_author_id_fkey"
+      columns: ["author_id"]
+isOneToOne: false
+      referencedRelation: "admin_profiles"
+      referencedColumns: ["user_id"]
+    },{
       foreignKeyName: "articles_cover_media_id_fkey"
       columns: ["cover_media_id"]
 isOneToOne: false
@@ -494,7 +500,8 @@ isOneToOne: false
                            },
 "fn_related_articles":
 { Args: { "p_article_id": string,"p_limit"?: number }; Returns: {
-              "canonical_url": string,
+              "author_id": string | null,
+"canonical_url": string,
 "content_html": string,
 "content_json": NonNullable<Json>,
 "cover_media_id": string | null,

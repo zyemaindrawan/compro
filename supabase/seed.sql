@@ -1,7 +1,7 @@
 update public.site_settings
 set
-  site_name = 'Northwind Studio',
-  title_template = '%s · Northwind Studio',
+  site_name = 'TokoDesign',
+  title_template = '%s · TokoDesign',
   tagline = 'Web, mobile and cloud software, built to last.',
   description = 'A software studio that designs, builds and runs web applications, Android apps and cloud infrastructure for growing companies.',
   email = 'hello@example.com',
