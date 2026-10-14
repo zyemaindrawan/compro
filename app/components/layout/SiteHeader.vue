@@ -2,6 +2,12 @@
 const { services } = useSiteSettings()
 const route = useRoute()
 const menuOpen = ref(false)
+const menuLoaded = ref(false)
+
+function openMenu() {
+  menuLoaded.value = true
+  menuOpen.value = true
+}
 
 const links = [
   { label: 'Pricing', to: '/pricing' },
@@ -84,12 +90,13 @@ watch(() => route.fullPath, () => {
           variant="ghost"
           aria-label="Open menu"
           class="lg:hidden"
-          @click="menuOpen = true"
+          @click="openMenu"
         />
       </div>
     </UContainer>
 
-    <USlideover
+    <LazyUSlideover
+      v-if="menuLoaded"
       v-model:open="menuOpen"
       title="Menu"
       side="right"
@@ -140,6 +147,6 @@ watch(() => route.fullPath, () => {
           class="mt-6"
         />
       </template>
-    </USlideover>
+    </LazyUSlideover>
   </header>
 </template>
