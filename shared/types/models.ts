@@ -179,3 +179,99 @@ export interface AdminArticle {
   categoryIds: string[]
   seo: SeoFields
 }
+
+export interface PageBlock {
+  id: string
+  type: string
+  props: Record<string, unknown>
+  isVisible: boolean
+}
+
+export interface ServiceCard {
+  id: string
+  name: string
+  slug: string
+  summary: string
+  icon: string
+}
+
+export interface PricingCell {
+  type: 'check' | 'cross' | 'text'
+  text: string
+}
+
+export interface PricingPlan {
+  id: string
+  name: string
+  slug: string
+  price: number
+  priceSuffix: string
+  description: string
+  ctaLabel: string
+  isPopular: boolean
+}
+
+export interface PricingFeature {
+  id: string
+  label: string
+  group: string
+  cells: Record<string, PricingCell>
+}
+
+export interface PricingGroup {
+  service: ServiceCard
+  plans: PricingPlan[]
+  features: PricingFeature[]
+}
+
+export interface BlockData {
+  media: Record<string, MediaAsset>
+  services: ServiceCard[]
+  pricing: PricingGroup[]
+  articles: Record<string, ArticleSummary[]>
+}
+
+export interface PublicPage {
+  id: string
+  title: string
+  slug: string
+  kind: 'home' | 'service' | 'static'
+  updatedAt: string
+  seo: SeoFields
+  blocks: PageBlock[]
+  data: BlockData
+}
+
+export interface ServicePageData {
+  service: ServiceCard
+  page: PublicPage | null
+  pricing: PricingGroup | null
+}
+
+export interface AdminPageListItem {
+  id: string
+  title: string
+  slug: string
+  kind: 'home' | 'service' | 'static'
+  status: 'draft' | 'published'
+  updatedAt: string
+  service: { id: string, name: string } | null
+}
+
+export interface AdminPage {
+  id: string
+  title: string
+  slug: string
+  kind: 'home' | 'service' | 'static'
+  status: 'draft' | 'published'
+  updatedAt: string
+  seo: SeoFields
+  blocks: PageBlock[]
+  media: Record<string, MediaAsset>
+}
+
+export interface AdminService extends ServiceCard {
+  isActive: boolean
+  pageId: string | null
+  planCount: number
+}

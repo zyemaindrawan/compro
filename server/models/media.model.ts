@@ -42,6 +42,12 @@ async function list(db: Db, query: MediaListQuery): Promise<Paginated<MediaAsset
   }
 }
 
+async function findMany(db: Db, ids: string[]): Promise<Record<string, MediaAsset>> {
+  if (!ids.length) return {}
+  const rows = unwrap(await db.from('media').select(MEDIA_COLUMNS).in('id', ids))
+  return Object.fromEntries(rows.map(row => [row.id, toMediaAsset(row)]))
+}
+
 async function findById(db: Db, id: string) {
   return unwrap(await db.from('media').select(MEDIA_COLUMNS).eq('id', id).single())
 }
@@ -88,6 +94,7 @@ async function remove(db: Db, id: string) {
 
 export const mediaModel = {
   list,
+  findMany,
   findById,
   uploadObjects,
   removeObjects,

@@ -1,6 +1,8 @@
 import type { H3Event } from 'h3'
 import { articleModel } from '../models/article.model'
 import { categoryModel } from '../models/category.model'
+import { pageModel } from '../models/page.model'
+import { serviceModel } from '../models/service.model'
 import { settingsModel } from '../models/settings.model'
 
 const FEED_SIZE = 20
@@ -48,11 +50,15 @@ async function rss(event: H3Event) {
 
 async function sitemapUrls() {
   const db = useAnonDb()
-  const [articles, categories] = await Promise.all([
+  const [articles, categories, pages, services] = await Promise.all([
     articleModel.sitemapEntries(db),
     categoryModel.sitemapEntries(db),
+    pageModel.sitemapEntries(db),
+    serviceModel.sitemapEntries(db),
   ])
   return [
+    ...pages.map(page => ({ loc: `/${page.slug}`, lastmod: page.updated_at })),
+    ...services.map(service => ({ loc: `/services/${service.slug}`, lastmod: service.updated_at })),
     ...articles.map(article => ({ loc: `/article/${article.slug}`, lastmod: article.updated_at })),
     ...categories.map(category => ({ loc: `/articles/category/${category.slug}`, lastmod: category.updated_at })),
   ]
