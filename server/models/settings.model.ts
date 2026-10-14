@@ -71,6 +71,11 @@ async function getSiteName(db: Db) {
   return row.site_name
 }
 
+async function getMailIdentity(db: Db) {
+  const row = unwrap(await db.from('site_settings').select('site_name, email').eq('id', 1).single())
+  return { siteName: row.site_name, email: row.email }
+}
+
 async function getMediaIds(db: Db) {
   return unwrap(await db
     .from('site_settings')
@@ -106,6 +111,7 @@ async function replaceSocialLinks(db: Db, links: SocialLinkInput[]) {
 export const settingsModel = {
   getSettings,
   getSiteName,
+  getMailIdentity,
   getMediaIds,
   updateSettings,
   replaceSocialLinks,

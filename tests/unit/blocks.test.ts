@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { articleQueryKey, blockService } from '../../server/services/block.service'
+import { articleQueryKey, blockService, portfolioQueryKey } from '../../server/services/block.service'
 import type { PageBlock } from '../../shared/types/models'
 
 const uuid = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`
@@ -51,5 +51,36 @@ describe('blockService.prepareForSave', () => {
     }])
     expect(saved?.id).toMatch(/^[0-9a-f-]{36}$/)
     expect((saved?.props as { content_html: string }).content_html).toBe('<p>Hi</p>')
+  })
+})
+
+describe('blockService.requirements for engagement blocks', () => {
+  it('collects each data kind once per page', () => {
+    const service = uuid(7)
+    const needs = blockService.requirements([
+      block('portfolio_grid', { heading: '', limit: 6, service_id: null }),
+      block('portfolio_grid', { heading: '', limit: 6, service_id: null }),
+      block('portfolio_grid', { heading: '', limit: 3, service_id: service }),
+      block('client_logos', { heading: '' }),
+      block('testimonials', { heading: '', limit: 3 }),
+      block('testimonials', { heading: '', limit: 6 }),
+      block('faq', { heading: '', group: 'Pricing' }),
+      block('form', { heading: '', intro: '', form_key: 'contact' }),
+      block('form', { heading: '', intro: '', form_key: 'contact' }),
+    ])
+    expect(needs.portfolioQueries.map(query => query.key)).toEqual([portfolioQueryKey(null, 6), portfolioQueryKey(service, 3)])
+    expect(needs.logos).toBe(true)
+    expect(needs.testimonialLimit).toBe(6)
+    expect(needs.faqs).toBe(true)
+    expect(needs.formKeys).toEqual(['contact'])
+  })
+
+  it('requests nothing extra for pages without engagement blocks', () => {
+    const needs = blockService.requirements([block('cta', { heading: 'Hi', body: '', primary: { label: '', href: '' } })])
+    expect(needs.portfolioQueries).toEqual([])
+    expect(needs.logos).toBe(false)
+    expect(needs.testimonialLimit).toBe(0)
+    expect(needs.faqs).toBe(false)
+    expect(needs.formKeys).toEqual([])
   })
 })

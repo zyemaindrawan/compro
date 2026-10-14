@@ -8,10 +8,19 @@ export interface BlockRequirements {
   serviceIds: string[] | 'all' | null
   pricing: boolean
   articleQueries: { key: string, category: string, limit: number }[]
+  portfolioQueries: { key: string, serviceId: string | null, limit: number }[]
+  logos: boolean
+  testimonialLimit: number
+  faqs: boolean
+  formKeys: string[]
 }
 
 export function articleQueryKey(category: string, limit: number) {
   return `${category || 'all'}:${limit}`
+}
+
+export function portfolioQueryKey(serviceId: string | null, limit: number) {
+  return `${serviceId ?? 'all'}:${limit}`
 }
 
 function validBlocks(blocks: PageBlock[]): PageBlock[] {
@@ -33,8 +42,13 @@ function requirements(blocks: PageBlock[]): BlockRequirements {
   const media = new Set<string>()
   const services = new Set<string>()
   const queries = new Map<string, { key: string, category: string, limit: number }>()
+  const portfolio = new Map<string, { key: string, serviceId: string | null, limit: number }>()
+  const formKeys = new Set<string>()
   let allServices = false
   let pricing = false
+  let logos = false
+  let faqs = false
+  let testimonialLimit = 0
 
   for (const block of blocks) {
     const props = block.props
@@ -52,6 +66,16 @@ function requirements(blocks: PageBlock[]): BlockRequirements {
       const key = articleQueryKey(category, limit)
       queries.set(key, { key, category, limit })
     }
+    if (block.type === 'portfolio_grid') {
+      const serviceId = typeof props.service_id === 'string' ? props.service_id : null
+      const limit = Number(props.limit)
+      const key = portfolioQueryKey(serviceId, limit)
+      portfolio.set(key, { key, serviceId, limit })
+    }
+    if (block.type === 'client_logos') logos = true
+    if (block.type === 'testimonials') testimonialLimit = Math.max(testimonialLimit, Number(props.limit))
+    if (block.type === 'faq') faqs = true
+    if (block.type === 'form') formKeys.add(String(props.form_key))
   }
 
   return {
@@ -59,6 +83,11 @@ function requirements(blocks: PageBlock[]): BlockRequirements {
     serviceIds: allServices ? 'all' : services.size ? [...services] : null,
     pricing,
     articleQueries: [...queries.values()],
+    portfolioQueries: [...portfolio.values()],
+    logos,
+    testimonialLimit,
+    faqs,
+    formKeys: [...formKeys],
   }
 }
 

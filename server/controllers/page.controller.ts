@@ -4,11 +4,16 @@ import { pageSchema, staticPageSlugSchema } from '#shared/schemas/page.schema'
 import type { AdminPage, BlockData, PageBlock, PublicPage } from '#shared/types/models'
 import type { Db } from '../utils/supabase'
 import { articleModel } from '../models/article.model'
+import { clientLogoModel } from '../models/client-logo.model'
+import { faqModel } from '../models/faq.model'
+import { formModel } from '../models/form.model'
 import { mediaModel } from '../models/media.model'
 import { pageModel, toBlocks, type PageRow } from '../models/page.model'
+import { portfolioModel } from '../models/portfolio.model'
 import { pricingModel } from '../models/pricing.model'
 import { redirectModel } from '../models/redirect.model'
 import { serviceModel } from '../models/service.model'
+import { testimonialModel } from '../models/testimonial.model'
 import { blockService } from '../services/block.service'
 import { cacheService } from '../services/cache.service'
 
@@ -16,7 +21,7 @@ const idParams = z.object({ id: z.uuid('Invalid id') })
 
 export async function resolveBlockData(db: Db, blocks: PageBlock[]): Promise<BlockData> {
   const needs = blockService.requirements(blocks)
-  const [media, services, pricing, articleLists] = await Promise.all([
+  const [media, services, pricing, articleLists, portfolioLists, logos, testimonials, faqs, forms] = await Promise.all([
     mediaModel.findMany(db, needs.mediaIds),
     needs.serviceIds === null ? [] : serviceModel.listCards(db, needs.serviceIds === 'all' ? undefined : needs.serviceIds),
     needs.pricing ? pricingModel.groups(db, { activeOnly: true }) : [],
@@ -24,8 +29,26 @@ export async function resolveBlockData(db: Db, blocks: PageBlock[]): Promise<Blo
       articleModel
         .listPublished(db, { page: 1, perPage: query.limit, category: query.category || undefined })
         .then(result => [query.key, result.items] as const))),
+    Promise.all(needs.portfolioQueries.map(query =>
+      portfolioModel
+        .listPublic(db, { serviceId: query.serviceId, limit: query.limit })
+        .then(items => [query.key, items] as const))),
+    needs.logos ? clientLogoModel.listPublic(db) : [],
+    needs.testimonialLimit ? testimonialModel.listPublic(db, needs.testimonialLimit) : [],
+    needs.faqs ? faqModel.listPublic(db) : [],
+    formModel.findPublicByKeys(db, needs.formKeys),
   ])
-  return { media, services, pricing, articles: Object.fromEntries(articleLists) }
+  return {
+    media,
+    services,
+    pricing,
+    articles: Object.fromEntries(articleLists),
+    portfolio: Object.fromEntries(portfolioLists),
+    logos,
+    testimonials,
+    faqs,
+    forms,
+  }
 }
 
 export async function toPublicPage(db: Db, row: PageRow): Promise<PublicPage> {

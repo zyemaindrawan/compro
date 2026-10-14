@@ -62,6 +62,7 @@ export default defineNuxtConfig({
     },
     turnstile: {
       secretKey: '',
+      verifyUrl: 'https://challenges.cloudflare.com/turnstile/v0/siteverify',
     },
     public: {
       mediaOrigin: new URL(supabaseUrl).origin,
@@ -82,6 +83,13 @@ export default defineNuxtConfig({
     },
     '/api/admin/**': {
       security: { rateLimiter: { tokensPerInterval: 60, interval: minute } },
+    },
+    '/api/public/submissions/**': {
+      security: {
+        rateLimiter: { tokensPerInterval: 3, interval: minute, headers: true },
+        xssValidator: false,
+        requestSizeLimiter: { maxRequestSizeInBytes: 64_000 },
+      },
     },
     '/api/admin/media': {
       security: {

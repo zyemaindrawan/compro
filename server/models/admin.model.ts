@@ -26,7 +26,7 @@ async function updateProfile(db: Db, userId: string, input: ProfileInput) {
   ensureOk(await db.from('admin_profiles').update(input).eq('user_id', userId))
 }
 
-async function dashboardStats(db: Db): Promise<DashboardStats> {
+async function dashboardStats(db: Db): Promise<Omit<DashboardStats, 'latestSubmissions'>> {
   const row = unwrap(await db.from('v_dashboard_stats').select('*').single())
   return {
     publishedArticles: row.published_articles ?? 0,

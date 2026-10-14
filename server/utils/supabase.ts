@@ -55,3 +55,16 @@ export function useAnonDb(): Db {
   }
   return anonClient
 }
+
+let serviceClient: Db | undefined
+
+export function useServiceDb(): Db {
+  if (!serviceClient) {
+    const { url, secretKey } = supabaseConfig()
+    if (!secretKey) throw new Error('Set NUXT_SUPABASE_SECRET_KEY.')
+    serviceClient = createClient<Database>(url, secretKey, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    })
+  }
+  return serviceClient
+}
