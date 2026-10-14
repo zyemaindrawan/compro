@@ -1,0 +1,71 @@
+{
+  "name": "compro",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "preview": "node .output/server/index.mjs",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "nuxt typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "db:start": "supabase start",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript --local > shared/types/database.ts",
+    "admin:create": "node --env-file=.env scripts/create-admin.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@iconify-json/lucide": "^1.2.144",
+    "@iconify-json/simple-icons": "^1.2.100",
+    "@nuxt/icon": "^2.5.1",
+    "@nuxt/image": "^2.1.0",
+    "@nuxt/ui": "^4.11.3",
+    "@nuxtjs/seo": "^6.0.1",
+    "@nuxtjs/supabase": "^2.0.10",
+    "@supabase/supabase-js": "^2.117.3",
+    "@vueuse/core": "^15.0.0",
+    "@vueuse/nuxt": "^15.0.0",
+    "blurhash": "^2.0.5",
+    "file-type": "^22.1.1",
+    "nodemailer": "^10.1.1",
+    "nuxt": "^4.6.1",
+    "nuxt-security": "^2.6.0",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.3",
+    "vue": "^3.5.44",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.17.0",
+    "@nuxt/test-utils": "^4.3.3",
+    "@playwright/test": "^1.64.1",
+    "@types/nodemailer": "^8.0.2",
+    "@vue/test-utils": "^2.5.1",
+    "eslint": "^10.12.0",
+    "happy-dom": "^21.0.1",
+    "otpauth": "^9.5.2",
+    "supabase": "^2.121.0",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.4",
+    "vue-tsc": "^3.3.13"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp",
+      "supabase",
+      "unrs-resolver",
+      "vue-demi"
+    ]
+  }
+}
