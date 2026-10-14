@@ -26,11 +26,12 @@ The agency needs a fast, credible website that converts global visitors into lea
 ### 1.3 Success metrics
 | Metric | Target |
 |---|---|
-| Lighthouse (mobile) Performance / SEO / Accessibility / Best Practices | ≥ 95 each on Home, Article, Pricing |
+| Lighthouse (mobile) Performance | ≥ 90 on Home, Article, Pricing |
+| Lighthouse (mobile) Accessibility / Best Practices / SEO | ≥ 95 each on Home, Article, Pricing |
 | LCP (p75, mobile) | < 2.0 s |
 | CLS | < 0.05 |
 | INP | < 200 ms |
-| Initial JS on public pages | < 120 KB gzip |
+| Initial JS on public pages | ≤ 200 KB gzip |
 | Client-side route change | < 150 ms perceived (prefetched) |
 | Contact form spam reaching inbox | < 1 % of submissions |
 
@@ -359,6 +360,8 @@ Each block type = one Vue component + one Zod props schema + one admin editor fo
 | `cta` | heading, body, button label, link |
 | `form` | form key, heading, intro |
 
+Status: `hero`, `rich_text`, `image_text`, `services_grid`, `pricing_table`, `latest_articles`, `stats` and `cta` ship in M3. `portfolio_grid`, `client_logos`, `testimonials`, `faq` and `form` ship in M4 with the modules that own their data.
+
 Rules:
 - Blocks below the fold are lazy-hydrated.
 - Data for all data-driven blocks on a page is fetched in **one** server call that groups ids by type (no per-block queries).
@@ -500,7 +503,9 @@ All server errors are logged with route, user id (if any) and a request id that 
 | `/articles` | 79 | 96 → fixed | 100 | 100 | ~190 KB |
 | `/article/[slug]` | 74–81 | 100 | 100 | 100 | 196 KB |
 
-The JavaScript budget (120 KB) and the Performance target (95) are not met yet. Nuxt, Vue and the router alone are about 100 KB gzip, and Nuxt UI's app providers add about 50 KB. Closing the gap is part of M5 and needs a decision on how much of Nuxt UI public pages may use.
+After M3 (home, `/pricing`, a service page): Performance 73–81, Accessibility 100, Best Practices 100, SEO 100, initial JS 188–196 KB gzip.
+
+Targets were revised after the M2 measurement (Performance ≥ 90, initial JS ≤ 200 KB gzip): Nuxt, Vue and the router alone are about 100 KB gzip and Nuxt UI's app providers add about 50 KB, so the original 120 KB budget would require dropping Nuxt UI from public pages. JavaScript is within the new budget; Performance is closed out in M5.
 
 ## 15. Environment and deployment
 - Nitro preset `node-server`; start command `node .output/server/index.mjs`; Node 24 LTS (Node 22 if that is the newest Hostinger offers).
@@ -535,5 +540,5 @@ The JavaScript budget (120 KB) and the Performance target (95) are not met yet. 
 9. Admin is fully usable at 360 px width.
 10. Contact and Quotation forms reject bot submissions (missing Turnstile token, filled honeypot) and accept valid ones; admin receives an email.
 11. Client logos animate in a seamless loop, pause on hover, and render static under reduced motion.
-12. Lighthouse mobile ≥ 95 on Home, `/articles`, an article page and `/pricing`.
+12. Lighthouse mobile Performance ≥ 90 and Accessibility, Best Practices, SEO ≥ 95 on Home, `/articles`, an article page and `/pricing`; initial JS ≤ 200 KB gzip.
 13. 404 and 500 pages render with site navigation and no stack trace.

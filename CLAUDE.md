@@ -46,11 +46,11 @@ Layered MVC. Dependencies flow one way:
 - `<script setup lang="ts">` only. Props and emits typed with generics.
 - Small functions, early returns, no nested ternaries.
 - Reuse before creating: check `app/components/base` and `app/components/content` first. One card component per entity, reused everywhere it appears (`ArticleCard` serves archive, search, related and home).
-- Block components live in `app/components/blocks/`, each with a Zod schema in `shared/schemas/blocks/`, registered in `registry.ts`.
+- Blocks: props schema in `shared/schemas/block.schema.ts`, public component `app/components/blocks/Block*.vue` (wired in `BlockRenderer.vue` with lazy hydration), admin form `app/components/admin/blocks/Edit*.vue` (wired in `BlockEditor.vue`), defaults in `app/utils/block-registry.ts`. Data a block needs is collected by `blockService.requirements` and fetched once per page.
 - Icons: `<UIcon name="i-lucide-…">`. Brand/social icons: `i-simple-icons-…`. Do not install other icon packages.
 - Fonts are self-hosted from `@fontsource-variable/*` imports in `main.css`. Do not add Google Fonts or `@nuxt/fonts`.
 - Public pages must stay light: prefer plain markup over overlay-heavy Nuxt UI components (`UHeader`, `UNavigationMenu`, drawers). Check initial JS with a production build before adding a dependency to a public page.
-- Article HTML is sanitized on the server (`content.service.ts`). `v-html` is allowed only in `app/pages/article/**` for that field.
+- Article HTML is sanitized on the server (`content.service.ts`). `v-html` is allowed only in `app/pages/article/**` and `BlockRichText.vue`, both rendering server-sanitized HTML.
 - Styling: Tailwind utilities and Nuxt UI theme tokens in `app.config.ts`. No hard-coded hex colors in components.
 
 ## Auth

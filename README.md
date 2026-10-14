@@ -11,11 +11,13 @@ Company profile site and admin dashboard for a software agency. Nuxt 4, Supabase
 |---|---|
 | M1 Foundation: auth with mandatory TOTP, rate limiting, settings, media pipeline, layouts, error page | Done |
 | M2 Articles: categories, TipTap editor, archive, search, related, RSS, sitemap, 301 redirects | Done |
-| M3 Pages, services, pricing | Next |
-| M4 Portfolio, clients, testimonials, FAQ, forms | Planned |
+| M3 Block builder, home, static pages, services, pricing | Done |
+| M4 Portfolio, clients, testimonials, FAQ, forms | Next |
 | M5 SEO audit, performance, deployment | Planned |
 
-Services, Pricing, Portfolio and Contact pages arrive in M3 and M4 and return 404 until then.
+Portfolio, Contact and Quote pages arrive in M4 and return 404 until then.
+
+The seeded stats, prices and page copy are placeholders. Replace them under **Pages** and **Pricing** before launch, and have the privacy policy reviewed.
 
 ## Requirements
 
