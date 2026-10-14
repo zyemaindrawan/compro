@@ -9,6 +9,9 @@ const navigation: NavigationMenuItem[][] = [
     { label: 'Dashboard', icon: 'i-lucide-layout-dashboard', to: '/admin', exact: true },
     { label: 'Articles', icon: 'i-lucide-newspaper', to: '/admin/articles' },
     { label: 'Categories', icon: 'i-lucide-folder-tree', to: '/admin/categories' },
+    { label: 'Pages', icon: 'i-lucide-layout-template', to: '/admin/pages' },
+    { label: 'Services', icon: 'i-lucide-briefcase', to: '/admin/services' },
+    { label: 'Pricing', icon: 'i-lucide-tags', to: '/admin/pricing' },
     { label: 'Media', icon: 'i-lucide-images', to: '/admin/media' },
   ],
   [
