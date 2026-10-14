@@ -6,6 +6,7 @@ useSeoMeta({ title: 'Dashboard' })
 
 const api = useApi()
 const session = useAdminSession()
+const format = useFormat()
 const { data: stats, status } = await useAsyncData<DashboardStats>('admin-dashboard', () => api('/api/admin/dashboard'))
 
 const greeting = computed(() => {
@@ -58,6 +59,7 @@ const shortcuts = [
           label="New submissions"
           :value="stats.newSubmissions"
           icon="i-lucide-inbox"
+          to="/admin/submissions"
         />
         <StatCard
           label="Media files"
@@ -66,6 +68,56 @@ const shortcuts = [
           to="/admin/media"
         />
       </div>
+
+      <section
+        v-if="stats"
+        class="space-y-3"
+      >
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="text-sm font-semibold text-highlighted">
+            Latest submissions
+          </h2>
+          <UButton
+            to="/admin/submissions?status=all"
+            label="Open inbox"
+            trailing-icon="i-lucide-arrow-right"
+            color="neutral"
+            variant="link"
+            size="sm"
+          />
+        </div>
+        <ul
+          v-if="stats.latestSubmissions.length"
+          class="divide-y divide-default rounded-lg border border-default"
+        >
+          <li
+            v-for="item in stats.latestSubmissions"
+            :key="item.id"
+            class="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3"
+          >
+            <NuxtLink
+              :to="`/admin/submissions/${item.id}`"
+              class="min-w-0 flex-1 truncate font-medium text-highlighted hover:text-primary"
+            >
+              {{ item.name || item.email }}
+              <span class="font-normal text-muted">· {{ item.formName }}</span>
+            </NuxtLink>
+            <UBadge
+              :label="SUBMISSION_STATUS_META[item.status].label"
+              :color="SUBMISSION_STATUS_META[item.status].color"
+              variant="subtle"
+              size="sm"
+            />
+            <span class="w-full text-xs text-muted sm:w-auto">{{ format.dateTime(item.createdAt) }}</span>
+          </li>
+        </ul>
+        <p
+          v-else
+          class="rounded-lg border border-dashed border-default px-4 py-6 text-center text-sm text-muted"
+        >
+          No submissions yet. Contact and quote requests appear here.
+        </p>
+      </section>
 
       <section class="space-y-3">
         <h2 class="text-sm font-semibold text-highlighted">

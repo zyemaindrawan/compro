@@ -1,5 +1,6 @@
 import nodemailer, { type Transporter } from 'nodemailer'
 import type { FormFieldDef } from '#shared/types/models'
+import { displayFieldValue } from '#shared/utils/field-value'
 
 export interface MailMessage {
   to: string[]
@@ -55,14 +56,6 @@ async function send(message: MailMessage) {
   return true
 }
 
-export function displayValue(field: FormFieldDef, value: unknown): string {
-  const labelOf = (raw: string) => field.options.find(option => option.value === raw)?.label ?? raw
-  if (Array.isArray(value)) return value.map(item => labelOf(String(item))).join(', ')
-  if (typeof value === 'boolean') return value ? 'Yes' : 'No'
-  if (value === null || value === undefined) return ''
-  return labelOf(String(value))
-}
-
 export interface SubmissionMail {
   siteName: string
   formName: string
@@ -75,7 +68,7 @@ export interface SubmissionMail {
 
 export function renderSubmissionMail(input: SubmissionMail) {
   const rows = [
-    ...input.fields.map(field => ({ label: field.label, value: displayValue(field, input.data[field.name]) })),
+    ...input.fields.map(field => ({ label: field.label, value: displayFieldValue(field, input.data[field.name]) })),
     ...input.extras,
   ].filter(row => row.value !== '')
 

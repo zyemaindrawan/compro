@@ -4,21 +4,34 @@ import type { DropdownMenuItem, NavigationMenuItem } from '@nuxt/ui'
 const session = useAdminSession()
 const colorMode = useColorMode()
 
-const navigation: NavigationMenuItem[][] = [
+const { data: counts } = useSubmissionCounts()
+
+const navigation = computed<NavigationMenuItem[][]>(() => [
   [
     { label: 'Dashboard', icon: 'i-lucide-layout-dashboard', to: '/admin', exact: true },
+    {
+      label: 'Submissions',
+      icon: 'i-lucide-inbox',
+      to: '/admin/submissions',
+      badge: counts.value?.new ? { label: String(counts.value.new), color: 'primary', variant: 'solid' } : undefined,
+    },
     { label: 'Articles', icon: 'i-lucide-newspaper', to: '/admin/articles' },
     { label: 'Categories', icon: 'i-lucide-folder-tree', to: '/admin/categories' },
     { label: 'Pages', icon: 'i-lucide-layout-template', to: '/admin/pages' },
-    { label: 'Services', icon: 'i-lucide-briefcase', to: '/admin/services' },
+    { label: 'Services', icon: 'i-lucide-layout-grid', to: '/admin/services' },
     { label: 'Pricing', icon: 'i-lucide-tags', to: '/admin/pricing' },
+    { label: 'Portfolio', icon: 'i-lucide-briefcase', to: '/admin/portfolio' },
+    { label: 'Clients', icon: 'i-lucide-building-2', to: '/admin/clients' },
+    { label: 'Testimonials', icon: 'i-lucide-message-square-quote', to: '/admin/testimonials' },
+    { label: 'FAQs', icon: 'i-lucide-circle-help', to: '/admin/faqs' },
+    { label: 'Forms', icon: 'i-lucide-clipboard-list', to: '/admin/forms' },
     { label: 'Media', icon: 'i-lucide-images', to: '/admin/media' },
   ],
   [
     { label: 'Settings', icon: 'i-lucide-settings-2', to: '/admin/settings' },
     { label: 'View site', icon: 'i-lucide-external-link', to: '/', target: '_blank' },
   ],
-]
+])
 
 const profile = computed(() => session.state.value.profile)
 

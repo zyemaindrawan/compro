@@ -183,6 +183,31 @@ function propsOf<T extends BlockType>(block: BlockInput, _type: T) {
             :model-value="propsOf(block, 'cta')"
             :path="`blocks.${index}.props`"
           />
+          <EditPortfolioGrid
+            v-else-if="block.type === 'portfolio_grid'"
+            :model-value="propsOf(block, 'portfolio_grid')"
+            :path="`blocks.${index}.props`"
+          />
+          <EditClientLogos
+            v-else-if="block.type === 'client_logos'"
+            :model-value="propsOf(block, 'client_logos')"
+            :path="`blocks.${index}.props`"
+          />
+          <EditTestimonials
+            v-else-if="block.type === 'testimonials'"
+            :model-value="propsOf(block, 'testimonials')"
+            :path="`blocks.${index}.props`"
+          />
+          <EditFaq
+            v-else-if="block.type === 'faq'"
+            :model-value="propsOf(block, 'faq')"
+            :path="`blocks.${index}.props`"
+          />
+          <EditForm
+            v-else-if="block.type === 'form'"
+            :model-value="propsOf(block, 'form')"
+            :path="`blocks.${index}.props`"
+          />
         </div>
       </li>
     </ol>

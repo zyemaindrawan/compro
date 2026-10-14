@@ -67,6 +67,41 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     description: 'A contrasting band with one button.',
     create: () => ({ heading: 'Have a project in mind?', body: '', primary: { label: 'Request a quote', href: '/quote' } }),
   },
+  {
+    type: 'portfolio_grid',
+    label: 'Portfolio',
+    icon: 'i-lucide-briefcase',
+    description: 'Recent projects, optionally for one service.',
+    create: () => ({ heading: 'Recent work', limit: 3, service_id: null }),
+  },
+  {
+    type: 'client_logos',
+    label: 'Client logos',
+    icon: 'i-lucide-building-2',
+    description: 'A row of client logos that scrolls when there are five or more.',
+    create: () => ({ heading: 'Teams we have shipped for' }),
+  },
+  {
+    type: 'testimonials',
+    label: 'Testimonials',
+    icon: 'i-lucide-message-square-quote',
+    description: 'One large quote with supporting ones beside it.',
+    create: () => ({ heading: 'What clients say', limit: 3 }),
+  },
+  {
+    type: 'faq',
+    label: 'FAQ',
+    icon: 'i-lucide-circle-help',
+    description: 'Expandable questions. Adds FAQ structured data.',
+    create: () => ({ heading: 'Frequently asked questions', group: '' }),
+  },
+  {
+    type: 'form',
+    label: 'Form',
+    icon: 'i-lucide-clipboard-list',
+    description: 'The contact or quotation form, with spam protection.',
+    create: () => ({ heading: 'Tell us about your project', intro: '', form_key: 'contact' }),
+  },
 ]
 
 export function blockDefinition(type: string) {
