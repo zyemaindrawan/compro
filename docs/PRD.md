@@ -8,7 +8,7 @@
 | Stack | Nuxt 4 · Supabase (Postgres, Auth, Storage) · Nuxt UI v4 · Tailwind CSS v4 |
 | Hosting | Hostinger Node.js hosting (Nitro `node-server` preset) |
 | Status | Approved for implementation |
-| Last updated | Wed, 14 Oct 2026 |
+| Last updated | Thu, 15 Oct 2026 |
 
 ---
 
@@ -88,7 +88,7 @@ All formatting goes through shared formatters. Components never call `toLocaleSt
 | Images on page | `@nuxt/image` | `srcset`, lazy loading, explicit dimensions |
 | SEO | `@nuxtjs/seo` | Sitemap, robots, Schema.org, OG image, link checker |
 | Security | `nuxt-security` | Headers, CSP, rate limiter, request size limits, XSS validator |
-| Fonts | `@nuxt/fonts` | Self-hosted, subset, `font-display: swap` |
+| Fonts | `@fontsource-variable/geist`, `@fontsource-variable/bricolage-grotesque` | Self-hosted variable fonts imported in CSS, no third-party font requests |
 | Utilities | VueUse | |
 | Mail | nodemailer over Brevo SMTP | Admin notifications |
 | Anti-spam | Cloudflare Turnstile | Server-side token verification |
@@ -178,13 +178,12 @@ View (app/)  →  API route  →  Controller  →  Service  →  Model  →  Sup
 ### 4.5 Rendering and caching
 | Route | Mode |
 |---|---|
-| `/`, `/services/**`, `/pricing`, `/portfolio`, static pages | SSR + SWR 1 h |
-| `/articles/**`, `/article/**` | SSR + SWR 10 min |
-| `/api/public/**` | Cached handlers, keyed by params |
+| Public pages | SSR on every request, data from cached public APIs |
+| `/api/public/**` | `defineCachedEventHandler` in the `public` cache group (layout 1 h, articles 10 min), read with an anonymous Supabase client |
 | `/rss.xml`, `/sitemap.xml` | Cached 1 h |
-| `/admin/**` | Client-only (`ssr: false`), `noindex` |
+| `/admin/**` | Client-only (`ssr: false`), `noindex`, with an SPA loading screen |
 
-Publishing, updating or deleting content calls `cacheService.purge(tags)` so changes are visible immediately.
+Full-page HTML caching (route-level SWR) is intentionally not used: the SSR payload carries the visitor's auth state, so a cached page rendered for a signed-in admin could leak to anonymous visitors. Caching the data layer instead keeps pages fast without that risk. Every admin write that changes public content calls `cacheService.purgePublic()`.
 
 ---
 
@@ -338,7 +337,7 @@ Card: WebP thumbnail, title, service label, external-link icon. Clicking opens `
 | Submissions | Inbox with status filter, detail drawer, status change, internal note, CSV export, mark as spam |
 | Media | Grid library, upload (multi), alt text edit, usage-safe delete, copy URL |
 | Settings | Identity (site name, title template, tagline, logos, favicon, default OG image), Contact (phone, WhatsApp, default WhatsApp message, email, address, map URL, work hours per day), Social links (dynamic list: platform, URL, icon, order, active), Analytics (Umami ID + script URL), Localization (timezone) |
-| Account | Display name, avatar, bio, change password, 2FA enroll / re-enroll, sign out other sessions |
+| Account | Display name, avatar, bio, change password (requires the current password), move 2FA to a new device (verify the new factor before the old one is removed), sign out other sessions |
 | Redirects | List and edit 301 entries (auto-created on slug change) |
 
 ### 7.3 Block builder
@@ -416,10 +415,10 @@ Every article, category, page and service supports: meta title, meta description
 ## 11. Security
 | Area | Requirement |
 |---|---|
-| Authentication | Supabase Auth email + password. No public sign-up; admins are invited from the Supabase dashboard |
+| Authentication | Supabase Auth email + password, called from server routes (`/api/auth/*`) so rate limits apply. Public sign-up is disabled; admins are created with `pnpm admin:create`, which also creates the `admin_profiles` row |
 | 2FA | TOTP MFA mandatory. First login forces enrollment (QR + manual secret). Admin APIs and RLS require `aal2` |
-| Session | Supabase-managed JWT in httpOnly cookies via `@nuxtjs/supabase`; idle timeout 12 h |
-| Rate limiting | `nuxt-security` rateLimiter: login/MFA verify 5 req/min/IP, form submit 3 req/min/IP, admin API 60 req/min/user, public API 120 req/min/IP. Supabase Auth's own limits stay enabled |
+| Session | Supabase-managed session cookies via `@nuxtjs/supabase` (SameSite=Lax, Secure in production), 12 h cookie lifetime. Changing the password signs out other sessions |
+| Rate limiting | `nuxt-security` rateLimiter: login and MFA 5 req/min/IP, form submit 3 req/min/IP, admin API 60 req/min/IP, uploads 30 req/min/IP, public API 120 req/min/IP. Supabase Auth's own limits stay enabled. The default store is in-memory, which fits a single Hostinger Node process |
 | Headers | CSP (nonce-based), HSTS, `X-Content-Type-Options`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, frame-ancestors `none` |
 | Input | Zod validation on every controller; request body size limit 1 MB (uploads 10 MB) |
 | Output | Sanitized HTML only; no `v-html` on unsanitized data |
@@ -495,9 +494,10 @@ All server errors are logged with route, user id (if any) and a request id that 
 
 ## 15. Environment and deployment
 - Nitro preset `node-server`; start command `node .output/server/index.mjs`; Node 24 LTS (Node 22 if that is the newest Hostinger offers).
-- Environment variables: `NUXT_PUBLIC_SITE_URL`, `SUPABASE_URL`, `SUPABASE_KEY`, `SUPABASE_SERVICE_KEY`, `NUXT_SMTP_HOST` (`smtp-relay.brevo.com`), `NUXT_SMTP_PORT` (587), `NUXT_SMTP_USER`, `NUXT_SMTP_PASS`, `NUXT_SMTP_FROM`, `NUXT_TURNSTILE_SECRET_KEY`, `NUXT_PUBLIC_TURNSTILE_SITE_KEY`, `NUXT_IP_HASH_SALT`.
+- Environment variables: `NUXT_SITE_URL`, `NUXT_PUBLIC_SUPABASE_URL`, `NUXT_PUBLIC_SUPABASE_KEY` (publishable key), `NUXT_SUPABASE_SECRET_KEY`, `NUXT_SMTP_HOST` (`smtp-relay.brevo.com`), `NUXT_SMTP_PORT` (587), `NUXT_SMTP_USER`, `NUXT_SMTP_PASS`, `NUXT_SMTP_FROM`, `NUXT_TURNSTILE_SECRET_KEY`, `NUXT_PUBLIC_TURNSTILE_SITE_KEY`, `NUXT_IP_HASH_SALT`.
 - Supabase migrations versioned in `supabase/migrations`; `seed.sql` creates default settings, the four services, `home` page with default blocks, `contact` and `quotation` forms.
 - Brevo: verify sender domain (SPF, DKIM, DMARC) before go-live.
+- CSP `connect-src` allows Umami Cloud. A self-hosted Umami needs its host added in `nuxt.config.ts`.
 - Environments: local (Supabase CLI), staging, production.
 
 ---

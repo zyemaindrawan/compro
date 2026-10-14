@@ -11,7 +11,10 @@ pnpm typecheck      # vue-tsc
 pnpm test           # vitest unit tests
 pnpm test:e2e       # playwright
 pnpm build          # production build (node-server preset)
-supabase db reset   # apply migrations + seed locally
+pnpm db:start       # local Supabase (Docker)
+pnpm db:reset       # re-apply migrations + seed
+pnpm db:types       # regenerate shared/types/database.ts after a migration
+pnpm admin:create <email> [name]   # create an admin (public sign-up is disabled)
 ```
 Run `pnpm lint && pnpm typecheck && pnpm test` before every commit.
 
@@ -19,16 +22,17 @@ Run `pnpm lint && pnpm typecheck && pnpm test` before every commit.
 Layered MVC. Dependencies flow one way:
 `app/ → server/api → server/controllers → server/services → server/models → Supabase`
 
-- `server/models/` is the only place that queries Supabase. One file per aggregate: `article.model.ts`.
+- `server/models/` is the only place that talks to Supabase (database, storage and auth calls). One file per aggregate: `article.model.ts`. Models take a `Db` client as their first argument.
 - `server/services/` holds business logic. No `event`, no HTTP concerns.
 - `server/controllers/` validates input with Zod, calls services/models, throws `createError`.
-- `server/api/**` handlers are one line: call the controller.
+- `server/api/**` handlers are one line: call the controller. Server-only modules (models, services, controllers) are imported explicitly; only `server/utils` is auto-imported.
+- Clients: `useDb(event)` for the signed-in user (RLS applies), `useAnonDb()` for public cached reads so cached data never depends on who requested it.
 - `app/` never queries Supabase for content. Use `useFetch`/`$fetch` against `/api/*`. The browser Supabase client is for auth only.
 - `shared/` holds types, Zod schemas, formatters and constants. It imports nothing from `app/` or `server/`.
 - Admin endpoints live under `server/api/admin/**` and are guarded by `server/middleware/admin-auth.ts` (requires `aal2`).
 
 ## Data access
-- No N+1. Never `await` a model call inside `for`, `map`, `forEach` or `reduce`.
+- No N+1. Never load related data with a query per item inside `for`, `map`, `forEach` or `reduce`. Per-item calls are allowed only where Supabase has no batch API (storage uploads, MFA factors).
 - Load relations with PostgREST embedding in one query. Aggregates come from SQL views or RPC in `supabase/migrations`.
 - List endpoints select explicit columns and always paginate.
 - Batch writes with array `upsert`.
@@ -44,7 +48,13 @@ Layered MVC. Dependencies flow one way:
 - Reuse before creating: check `app/components/base` and `app/components/content` first. One card component per entity, reused everywhere it appears (`ArticleCard` serves archive, search, related and home).
 - Block components live in `app/components/blocks/`, each with a Zod schema in `shared/schemas/blocks/`, registered in `registry.ts`.
 - Icons: `<UIcon name="i-lucide-…">`. Brand/social icons: `i-simple-icons-…`. Do not install other icon packages.
+- Fonts are self-hosted from `@fontsource-variable/*` imports in `main.css`. Do not add Google Fonts or `@nuxt/fonts`.
 - Styling: Tailwind utilities and Nuxt UI theme tokens in `app.config.ts`. No hard-coded hex colors in components.
+
+## Auth
+- Login and MFA run through `server/api/auth/*` so the rate limiter covers them. The browser never calls `signInWithPassword` directly.
+- `/api/admin/**` is guarded by `server/middleware/admin-auth.ts` (`requireAdmin`: session + `aal2` + admin profile). RLS enforces the same through `fn_is_admin()`.
+- Public HTML is not cached (the SSR payload carries session state). Cache public data at the API layer with `defineCachedEventHandler` in the `public` group and call `cacheService.purgePublic()` after every admin write that changes public content.
 
 ## Content and formatting
 - All copy, labels, slugs, validation messages and emails are in English.
