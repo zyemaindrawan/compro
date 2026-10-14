@@ -1,0 +1,9 @@
+<style>
+  .spa-loading { position: fixed; inset: 0; display: grid; place-items: center; background: #fafaf9; }
+  .spa-loading span { width: 28px; height: 28px; border-radius: 9999px; border: 2px solid #d6d3d1; border-top-color: #c2410c; animation: spa-spin 700ms linear infinite; }
+  .dark .spa-loading { background: #0c0a09; }
+  @media (prefers-color-scheme: dark) { html:not(.light) .spa-loading { background: #0c0a09; } }
+  @media (prefers-reduced-motion: reduce) { .spa-loading span { animation-duration: 2s; } }
+  @keyframes spa-spin { to { transform: rotate(360deg); } }
+</style>
+<div class="spa-loading" role="status" aria-label="Loading dashboard"><span></span></div>
