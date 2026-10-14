@@ -26,7 +26,7 @@ Layered MVC. Dependencies flow one way:
 - `server/services/` holds business logic. No `event`, no HTTP concerns.
 - `server/controllers/` validates input with Zod, calls services/models, throws `createError`.
 - `server/api/**` handlers are one line: call the controller. Server-only modules (models, services, controllers) are imported explicitly; only `server/utils` is auto-imported.
-- Clients: `useDb(event)` for the signed-in user (RLS applies), `useAnonDb()` for public cached reads so cached data never depends on who requested it.
+- Clients: `useDb(event)` for the signed-in user (RLS applies, httpOnly session cookies), `useAnonDb()` for public cached reads so cached data never depends on who requested it. There is no browser Supabase client; do not add one.
 - `app/` never queries Supabase for content. Use `useFetch`/`$fetch` against `/api/*`. The browser Supabase client is for auth only.
 - `shared/` holds types, Zod schemas, formatters and constants. It imports nothing from `app/` or `server/`.
 - Admin endpoints live under `server/api/admin/**` and are guarded by `server/middleware/admin-auth.ts` (requires `aal2`).
@@ -49,6 +49,8 @@ Layered MVC. Dependencies flow one way:
 - Block components live in `app/components/blocks/`, each with a Zod schema in `shared/schemas/blocks/`, registered in `registry.ts`.
 - Icons: `<UIcon name="i-lucide-…">`. Brand/social icons: `i-simple-icons-…`. Do not install other icon packages.
 - Fonts are self-hosted from `@fontsource-variable/*` imports in `main.css`. Do not add Google Fonts or `@nuxt/fonts`.
+- Public pages must stay light: prefer plain markup over overlay-heavy Nuxt UI components (`UHeader`, `UNavigationMenu`, drawers). Check initial JS with a production build before adding a dependency to a public page.
+- Article HTML is sanitized on the server (`content.service.ts`). `v-html` is allowed only in `app/pages/article/**` for that field.
 - Styling: Tailwind utilities and Nuxt UI theme tokens in `app.config.ts`. No hard-coded hex colors in components.
 
 ## Auth

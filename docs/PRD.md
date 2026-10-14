@@ -81,9 +81,9 @@ All formatting goes through shared formatters. Components never call `toLocaleSt
 | Database | Supabase Postgres | RLS enabled on every table |
 | Auth | Supabase Auth | Email + password, MFA TOTP, AAL2 enforcement |
 | Storage | Supabase Storage | Public bucket `media`, private bucket `uploads-private` |
-| Supabase client | `@nuxtjs/supabase` | Server client in Nitro, browser client for auth only |
+| Supabase client | `@supabase/ssr` + `@supabase/supabase-js`, server only | The browser never loads a Supabase client; session cookies are httpOnly |
 | Validation | Zod | Shared between client forms and server controllers |
-| Rich text | TipTap 3 | Stores JSON + sanitized HTML |
+| Rich text | TipTap 3 via Nuxt UI `UEditor` | Stores JSON + HTML sanitized on the server with `sanitize-html` |
 | Image processing | sharp | Server-side WebP conversion |
 | Images on page | `@nuxt/image` | `srcset`, lazy loading, explicit dimensions |
 | SEO | `@nuxtjs/seo` | Sitemap, robots, Schema.org, OG image, link checker |
@@ -417,7 +417,7 @@ Every article, category, page and service supports: meta title, meta description
 |---|---|
 | Authentication | Supabase Auth email + password, called from server routes (`/api/auth/*`) so rate limits apply. Public sign-up is disabled; admins are created with `pnpm admin:create`, which also creates the `admin_profiles` row |
 | 2FA | TOTP MFA mandatory. First login forces enrollment (QR + manual secret). Admin APIs and RLS require `aal2` |
-| Session | Supabase-managed session cookies via `@nuxtjs/supabase` (SameSite=Lax, Secure in production), 12 h cookie lifetime. Changing the password signs out other sessions |
+| Session | Supabase session cookies set by the server only: httpOnly, SameSite=Lax, Secure in production, 12 h lifetime. Changing the password signs out other sessions |
 | Rate limiting | `nuxt-security` rateLimiter: login and MFA 5 req/min/IP, form submit 3 req/min/IP, admin API 60 req/min/IP, uploads 30 req/min/IP, public API 120 req/min/IP. Supabase Auth's own limits stay enabled. The default store is in-memory, which fits a single Hostinger Node process |
 | Headers | CSP (nonce-based), HSTS, `X-Content-Type-Options`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, frame-ancestors `none` |
 | Input | Zod validation on every controller; request body size limit 1 MB (uploads 10 MB) |
@@ -488,13 +488,23 @@ All server errors are logged with route, user id (if any) and a request id that 
 - Prefetch links on visibility/hover (Nuxt default) for instant navigation.
 - Payload: public API responses select only needed columns.
 - Umami script `defer`, loaded after hydration.
-- Gzip/Brotli enabled on Hostinger or via Nitro `compressPublicAssets`.
+- Static assets are pre-compressed (`compressPublicAssets`); SSR HTML is compressed with Brotli or gzip by `server/plugins/compress-html.ts`.
+- The public header is plain markup with a CSS-only services menu; Nuxt UI overlay-heavy components stay out of public pages.
 
 ---
 
+### 14.1 Measured status (after M2, production build, Lighthouse mobile, local)
+| Page | Performance | Accessibility | Best practices | SEO | Initial JS (gzip) |
+|---|---|---|---|---|---|
+| `/` | 84–86 | 96 → fixed | 100 | 100 | 186 KB |
+| `/articles` | 79 | 96 → fixed | 100 | 100 | ~190 KB |
+| `/article/[slug]` | 74–81 | 100 | 100 | 100 | 196 KB |
+
+The JavaScript budget (120 KB) and the Performance target (95) are not met yet. Nuxt, Vue and the router alone are about 100 KB gzip, and Nuxt UI's app providers add about 50 KB. Closing the gap is part of M5 and needs a decision on how much of Nuxt UI public pages may use.
+
 ## 15. Environment and deployment
 - Nitro preset `node-server`; start command `node .output/server/index.mjs`; Node 24 LTS (Node 22 if that is the newest Hostinger offers).
-- Environment variables: `NUXT_SITE_URL`, `NUXT_PUBLIC_SUPABASE_URL`, `NUXT_PUBLIC_SUPABASE_KEY` (publishable key), `NUXT_SUPABASE_SECRET_KEY`, `NUXT_SMTP_HOST` (`smtp-relay.brevo.com`), `NUXT_SMTP_PORT` (587), `NUXT_SMTP_USER`, `NUXT_SMTP_PASS`, `NUXT_SMTP_FROM`, `NUXT_TURNSTILE_SECRET_KEY`, `NUXT_PUBLIC_TURNSTILE_SITE_KEY`, `NUXT_IP_HASH_SALT`.
+- Environment variables: `NUXT_SITE_URL`, `NUXT_SUPABASE_URL`, `NUXT_SUPABASE_KEY` (publishable key), `NUXT_SUPABASE_SECRET_KEY`, `NUXT_SMTP_HOST` (`smtp-relay.brevo.com`), `NUXT_SMTP_PORT` (587), `NUXT_SMTP_USER`, `NUXT_SMTP_PASS`, `NUXT_SMTP_FROM`, `NUXT_TURNSTILE_SECRET_KEY`, `NUXT_PUBLIC_TURNSTILE_SITE_KEY`, `NUXT_IP_HASH_SALT`.
 - Supabase migrations versioned in `supabase/migrations`; `seed.sql` creates default settings, the four services, `home` page with default blocks, `contact` and `quotation` forms.
 - Brevo: verify sender domain (SPF, DKIM, DMARC) before go-live.
 - CSP `connect-src` allows Umami Cloud. A self-hosted Umami needs its host added in `nuxt.config.ts`.

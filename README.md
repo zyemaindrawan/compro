@@ -10,12 +10,12 @@ Company profile site and admin dashboard for a software agency. Nuxt 4, Supabase
 | Milestone | State |
 |---|---|
 | M1 Foundation: auth with mandatory TOTP, rate limiting, settings, media pipeline, layouts, error page | Done |
-| M2 Articles | Next |
-| M3 Pages, services, pricing | Planned |
+| M2 Articles: categories, TipTap editor, archive, search, related, RSS, sitemap, 301 redirects | Done |
+| M3 Pages, services, pricing | Next |
 | M4 Portfolio, clients, testimonials, FAQ, forms | Planned |
 | M5 SEO audit, performance, deployment | Planned |
 
-Links in the public navigation point to pages that arrive in M2 to M4 and return 404 until then.
+Services, Pricing, Portfolio and Contact pages arrive in M3 and M4 and return 404 until then.
 
 ## Requirements
 
@@ -27,7 +27,7 @@ Links in the public navigation point to pages that arrive in M2 to M4 and return
 ```bash
 pnpm install
 pnpm db:start                 # prints the API URL and keys
-cp .env.example .env          # fill NUXT_PUBLIC_SUPABASE_KEY (publishable) and NUXT_SUPABASE_SECRET_KEY
+cp .env.example .env          # fill NUXT_SUPABASE_KEY (publishable) and NUXT_SUPABASE_SECRET_KEY
 pnpm db:reset                 # migrations + seed
 pnpm admin:create you@company.com "Your Name"
 pnpm dev
