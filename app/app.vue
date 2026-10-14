@@ -19,6 +19,23 @@ useHead({
     : [],
 })
 
+useHead({
+  link: [{ rel: 'preconnect', href: useRuntimeConfig().public.mediaOrigin }],
+})
+
+useSchemaOrg([
+  defineOrganization({
+    name: settings.value?.siteName ?? '',
+    sameAs: settings.value?.socialLinks.map(link => link.url) ?? [],
+    ...(settings.value?.logoLight ? { logo: settings.value.logoLight.url } : {}),
+  }),
+  defineWebSite({
+    name: settings.value?.siteName ?? '',
+    potentialAction: [defineSearchAction({ target: '/articles?q={search_term_string}' })],
+  }),
+  defineWebPage(),
+])
+
 useSeoMeta({
   description: () => settings.value?.description,
   ogSiteName: () => settings.value?.siteName,

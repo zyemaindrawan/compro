@@ -20,7 +20,12 @@ const message = computed(() => {
   return 'The error has been logged. Try again, or reach out if it keeps happening.'
 })
 
-useSeoMeta({ title: () => (notFound.value ? 'Page not found' : 'Error'), robots: 'noindex' })
+useSeoMeta({
+  title: () => (notFound.value ? 'Page not found' : 'Error'),
+  description: () => message.value,
+  ogDescription: () => message.value,
+  robots: 'noindex',
+})
 
 const { settings } = useSiteSettings()
 const isAdmin = computed(() => useRoute().path.startsWith('/admin'))

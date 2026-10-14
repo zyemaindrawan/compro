@@ -98,3 +98,84 @@ export interface MfaFactor {
 }
 
 export type AuthNextStep = 'enroll' | 'verify' | 'done'
+
+export interface SeoFields {
+  metaTitle: string
+  metaDescription: string
+  metaKeywords: string[]
+  canonicalUrl: string
+  ogImage: MediaAsset | null
+  noindex: boolean
+}
+
+export interface CategoryRef {
+  name: string
+  slug: string
+}
+
+export interface ArticleSummary {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  publishedAt: string | null
+  readingMinutes: number
+  cover: MediaAsset | null
+  categories: CategoryRef[]
+}
+
+export interface ArticleAuthor {
+  displayName: string
+  bio: string
+  avatar: MediaAsset | null
+}
+
+export interface ArticleDetail extends ArticleSummary {
+  contentHtml: string
+  updatedAt: string
+  author: ArticleAuthor | null
+  seo: SeoFields
+}
+
+export interface ArticlePageData {
+  article: ArticleDetail
+  related: ArticleSummary[]
+}
+
+export interface CategorySummary {
+  id: string
+  name: string
+  slug: string
+  description: string
+  articleCount: number
+}
+
+export interface CategoryDetail extends CategorySummary {
+  seo: SeoFields
+  updatedAt: string
+}
+
+export interface AdminArticleListItem {
+  id: string
+  title: string
+  slug: string
+  status: 'draft' | 'published'
+  publishedAt: string | null
+  updatedAt: string
+  categories: CategoryRef[]
+}
+
+export interface AdminArticle {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  contentJson: Record<string, unknown>
+  contentHtml: string
+  status: 'draft' | 'published'
+  publishedAt: string | null
+  updatedAt: string
+  cover: MediaAsset | null
+  categoryIds: string[]
+  seo: SeoFields
+}

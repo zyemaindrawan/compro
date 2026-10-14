@@ -8,8 +8,8 @@ const props = withDefaults(defineProps<{ purpose?: MediaPurpose, compact?: boole
 })
 const emit = defineEmits<{ uploaded: [media: MediaAsset[]] }>()
 
-const api = useApi()
 const notify = useNotify()
+const { uploadMany } = useMediaUpload()
 const files = ref<File[] | null>(null)
 const progress = ref<{ done: number, total: number } | null>(null)
 
@@ -22,25 +22,14 @@ watch(files, async (selected) => {
   const queue = [...selected]
   files.value = null
   progress.value = { done: 0, total: queue.length }
-  const uploaded: MediaAsset[] = []
 
-  for (const file of queue) {
-    const body = new FormData()
-    body.append('file', file)
-    body.append('purpose', props.purpose)
-    body.append('alt', file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim())
-    try {
-      uploaded.push(await api<MediaAsset>('/api/admin/media', { method: 'POST', body }))
-    }
-    catch (error) {
-      notify.error(error, `Could not upload ${file.name}`)
-    }
-    progress.value.done++
-  }
+  const uploaded = await uploadMany(queue, props.purpose, (done) => {
+    if (progress.value) progress.value.done = done
+  })
 
   progress.value = null
   if (uploaded.length) {
-    notify.success(uploaded.length === 1 ? 'Image uploaded' : `${uploaded.length} images uploaded`, 'Converted to WebP. Add alt text so screen readers and search engines understand it.')
+    notify.success(uploaded.length === 1 ? 'Image uploaded' : `${uploaded.length} images uploaded`, 'Add alt text so screen readers and search engines understand it.')
     emit('uploaded', uploaded)
   }
 })

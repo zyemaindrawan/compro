@@ -17,6 +17,20 @@ const srcset = computed(() => {
   if (props.media.width) entries.push(`${props.media.url} ${props.media.width}w`)
   return entries.length > 1 ? entries.join(', ') : undefined
 })
+
+if (props.priority) {
+  useHead({
+    link: [{
+      rel: 'preload',
+      as: 'image',
+      href: props.media.url,
+      imagesrcset: srcset.value,
+      imagesizes: srcset.value ? props.sizes : undefined,
+      fetchpriority: 'high',
+      key: `preload-${props.media.id}`,
+    }],
+  })
+}
 </script>
 
 <template>

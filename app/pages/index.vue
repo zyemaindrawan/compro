@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import type { ArticleSummary, Paginated } from '#shared/types/models'
+
 const { settings, services } = useSiteSettings()
+const { data: latest } = await useFetch<Paginated<ArticleSummary>>('/api/public/articles', {
+  key: 'home-latest-articles',
+  query: { perPage: 3 },
+})
 
 useSeoMeta({
   title: () => settings.value?.tagline || 'Home',
@@ -65,6 +71,31 @@ useSeoMeta({
             </NuxtLink>
           </li>
         </ul>
+      </UContainer>
+    </section>
+
+    <section
+      v-if="latest?.items.length"
+      class="border-t border-default"
+      aria-labelledby="latest-articles"
+    >
+      <UContainer class="space-y-10 py-16 sm:py-24">
+        <div class="flex items-end justify-between gap-4">
+          <h2
+            id="latest-articles"
+            class="font-display text-3xl font-bold text-highlighted"
+          >
+            From the blog
+          </h2>
+          <UButton
+            to="/articles"
+            label="All articles"
+            trailing-icon="i-lucide-arrow-right"
+            color="neutral"
+            variant="link"
+          />
+        </div>
+        <ArticleGrid :articles="latest.items" />
       </UContainer>
     </section>
   </div>

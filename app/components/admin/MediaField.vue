@@ -25,7 +25,6 @@ watch(() => props.initial, (value) => {
 function choose(media: MediaAsset) {
   model.value = media.id
   preview.value = media
-  open.value = false
 }
 
 function clear() {
@@ -55,26 +54,13 @@ function clear() {
         />
       </div>
       <div class="flex flex-wrap gap-2">
-        <UModal
-          v-model:open="open"
-          :title="`Choose ${label.toLowerCase()}`"
-          :ui="{ content: 'sm:max-w-4xl' }"
-        >
-          <UButton
-            :label="model ? 'Replace' : 'Choose'"
-            color="neutral"
-            variant="outline"
-            size="sm"
-          />
-          <template #body>
-            <MediaLibrary
-              :selected-id="model"
-              :purpose="purpose"
-              :per-page="18"
-              @select="choose"
-            />
-          </template>
-        </UModal>
+        <UButton
+          :label="model ? 'Replace' : 'Choose'"
+          color="neutral"
+          variant="outline"
+          size="sm"
+          @click="open = true"
+        />
         <UButton
           v-if="model"
           label="Remove"
@@ -85,5 +71,12 @@ function clear() {
         />
       </div>
     </div>
+    <MediaPickerModal
+      v-model:open="open"
+      :title="`Choose ${label.toLowerCase()}`"
+      :selected-id="model"
+      :purpose="purpose"
+      @select="choose"
+    />
   </UFormField>
 </template>

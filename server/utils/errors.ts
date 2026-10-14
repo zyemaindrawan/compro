@@ -21,6 +21,9 @@ const PG_ERRORS: Record<string, [number, string]> = {
 }
 
 export function throwDbError(error: SupabaseLikeError): never {
+  if (error.code === '23505' && /_slug_key|slug/.test(error.message)) {
+    fail(409, 'This slug is already in use.', { fields: { slug: 'Already in use. Choose another slug.' } })
+  }
   const known = error.code ? PG_ERRORS[error.code] : undefined
   if (known) fail(known[0], known[1])
 

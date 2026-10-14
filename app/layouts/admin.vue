@@ -7,6 +7,8 @@ const colorMode = useColorMode()
 const navigation: NavigationMenuItem[][] = [
   [
     { label: 'Dashboard', icon: 'i-lucide-layout-dashboard', to: '/admin', exact: true },
+    { label: 'Articles', icon: 'i-lucide-newspaper', to: '/admin/articles' },
+    { label: 'Categories', icon: 'i-lucide-folder-tree', to: '/admin/categories' },
     { label: 'Media', icon: 'i-lucide-images', to: '/admin/media' },
   ],
   [
