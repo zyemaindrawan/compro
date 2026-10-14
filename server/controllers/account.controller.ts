@@ -6,7 +6,7 @@ import { settingsModel } from '../models/settings.model'
 
 async function profile(event: H3Event) {
   const admin = await requireAdmin(event)
-  const db = await useDb(event)
+  const db = useDb(event)
   const [found, factors] = await Promise.all([
     adminModel.findProfile(db, admin.userId, admin.email),
     authModel.listFactors(db),
@@ -17,7 +17,7 @@ async function profile(event: H3Event) {
 async function updateProfile(event: H3Event) {
   const admin = await requireAdmin(event)
   const input = await validateBody(event, profileSchema)
-  const db = await useDb(event)
+  const db = useDb(event)
   await adminModel.updateProfile(db, admin.userId, input)
   return adminModel.findProfile(db, admin.userId, admin.email)
 }
@@ -29,7 +29,7 @@ async function changePassword(event: H3Event) {
   const valid = await authModel.verifyPassword(admin.email, input.currentPassword)
   if (!valid) fail(422, 'Your current password is incorrect.', { fields: { currentPassword: 'Incorrect password' } })
 
-  const db = await useDb(event)
+  const db = useDb(event)
   await authModel.updatePassword(db, input.password)
   await authModel.signOut(db, 'others')
   return { ok: true }
@@ -37,7 +37,7 @@ async function changePassword(event: H3Event) {
 
 async function startFactorReplacement(event: H3Event) {
   await requireAdmin(event)
-  const db = await useDb(event)
+  const db = useDb(event)
   const factors = await authModel.listFactors(db)
   const stale = factors.filter(factor => factor.status === 'unverified')
   await Promise.all(stale.map(factor => authModel.unenroll(db, factor.id)))
@@ -51,7 +51,7 @@ async function confirmFactorReplacement(event: H3Event) {
   const input = await validateBody(event, mfaCodeSchema)
   if (!input.factorId) fail(422, 'Missing authenticator id.')
 
-  const db = await useDb(event)
+  const db = useDb(event)
   const factors = await authModel.listFactors(db)
   const pending = factors.find(factor => factor.id === input.factorId && factor.status === 'unverified')
   if (!pending) fail(404, 'This setup has expired. Start again.')
@@ -64,7 +64,7 @@ async function confirmFactorReplacement(event: H3Event) {
 
 async function signOutOthers(event: H3Event) {
   await requireAdmin(event)
-  await authModel.signOut(await useDb(event), 'others')
+  await authModel.signOut(useDb(event), 'others')
   return { ok: true }
 }
 

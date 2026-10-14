@@ -16,7 +16,7 @@ declare module 'h3' {
 export async function requireAdmin(event: H3Event): Promise<AdminContext> {
   if (event.context.admin) return event.context.admin
 
-  const db = await useDb(event)
+  const db = useDb(event)
   const claims = await authModel.getClaims(db)
   if (!claims) fail(401, 'Please sign in.')
   if (claims.aal !== 'aal2') fail(403, 'Two-factor verification required.', { code: 'mfa_required' })

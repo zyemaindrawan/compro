@@ -24,7 +24,7 @@ async function signIn(db: Db, email: string, password: string) {
 }
 
 async function verifyPassword(email: string, password: string) {
-  const { url, key } = useRuntimeConfig().public.supabase
+  const { url, key } = supabaseConfig()
   const client = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   })

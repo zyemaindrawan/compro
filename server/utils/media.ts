@@ -22,7 +22,7 @@ interface StoredVariant {
 }
 
 export function publicStorageUrl(bucket: string, path: string) {
-  const base = useRuntimeConfig().public.supabase.url.replace(/\/$/, '')
+  const base = useRuntimeConfig().supabase.url.replace(/\/$/, '')
   return `${base}/storage/v1/object/public/${bucket}/${path}`
 }
 

@@ -15,14 +15,14 @@ async function publicLayout(): Promise<PublicLayoutData> {
 }
 
 async function show(event: H3Event) {
-  const db = await useDb(event)
+  const db = useDb(event)
   return settingsModel.getSettings(db, { activeLinksOnly: false })
 }
 
 async function update(event: H3Event) {
   const admin = await requireAdmin(event)
   const { social_links: socialLinks, ...input } = await validateBody(event, settingsUpdateSchema)
-  const db = await useDb(event)
+  const db = useDb(event)
 
   await settingsModel.updateSettings(db, input, admin.userId)
   await settingsModel.replaceSocialLinks(db, socialLinks)

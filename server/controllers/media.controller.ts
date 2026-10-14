@@ -12,7 +12,7 @@ const uploadFields = z.object({
 
 async function list(event: H3Event) {
   const query = validateQuery(event, mediaListQuerySchema)
-  return mediaModel.list(await useDb(event), query)
+  return mediaModel.list(useDb(event), query)
 }
 
 async function upload(event: H3Event) {
@@ -38,7 +38,7 @@ async function upload(event: H3Event) {
     ...variants.map(variant => ({ path: variant.path, body: variant.body, contentType: 'image/webp' })),
   ]
 
-  const db = await useDb(event)
+  const db = useDb(event)
   await mediaModel.uploadObjects(db, objects)
 
   try {
@@ -64,13 +64,13 @@ async function update(event: H3Event) {
   const admin = await requireAdmin(event)
   const { id } = validateParams(event, idParams)
   const input = await validateBody(event, mediaUpdateSchema)
-  return mediaModel.updateAlt(await useDb(event), id, input.alt, admin.userId)
+  return mediaModel.updateAlt(useDb(event), id, input.alt, admin.userId)
 }
 
 async function remove(event: H3Event) {
   await requireAdmin(event)
   const { id } = validateParams(event, idParams)
-  const db = await useDb(event)
+  const db = useDb(event)
   const row = await mediaModel.findById(db, id)
   await mediaModel.remove(db, id)
 

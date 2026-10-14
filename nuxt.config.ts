@@ -1,5 +1,5 @@
 const siteUrl = process.env.NUXT_SITE_URL || 'http://localhost:3000'
-const supabaseUrl = process.env.NUXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321'
+const supabaseUrl = process.env.NUXT_SUPABASE_URL || 'http://127.0.0.1:54321'
 const minute = 60_000
 
 export default defineNuxtConfig({
@@ -8,7 +8,6 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/ui',
     '@nuxt/image',
-    '@nuxtjs/supabase',
     '@nuxtjs/seo',
     '@vueuse/nuxt',
     'nuxt-security',
@@ -29,7 +28,7 @@ export default defineNuxtConfig({
 
   site: {
     url: siteUrl,
-    name: 'Agency',
+    name: 'TokoDesign',
     defaultLocale: 'en',
   },
 
@@ -49,6 +48,11 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     ipHashSalt: '',
+    supabase: {
+      url: supabaseUrl,
+      key: '',
+      secretKey: '',
+    },
     smtp: {
       host: '',
       port: 587,
@@ -60,6 +64,7 @@ export default defineNuxtConfig({
       secretKey: '',
     },
     public: {
+      mediaOrigin: new URL(supabaseUrl).origin,
       turnstile: {
         siteKey: '',
       },
@@ -108,6 +113,10 @@ export default defineNuxtConfig({
 
   typescript: {
     strict: true,
+  },
+
+  aiReady: {
+    enabled: false,
   },
 
   eslint: {
@@ -168,7 +177,7 @@ export default defineNuxtConfig({
         'style-src': ['\'self\'', '\'unsafe-inline\''],
         'img-src': ['\'self\'', 'data:', 'blob:', supabaseUrl],
         'font-src': ['\'self\'', 'data:'],
-        'connect-src': ['\'self\'', supabaseUrl, 'https://challenges.cloudflare.com', 'https://*.umami.is', 'https://cloud.umami.is'],
+        'connect-src': ['\'self\'', 'https://challenges.cloudflare.com', 'https://*.umami.is', 'https://cloud.umami.is'],
         'frame-src': ['https://challenges.cloudflare.com', 'https://www.youtube-nocookie.com'],
         'worker-src': ['\'self\'', 'blob:'],
         'upgrade-insecure-requests': process.env.NODE_ENV === 'production',
@@ -183,16 +192,7 @@ export default defineNuxtConfig({
   },
 
   sitemap: {
+    sources: ['/api/__sitemap__/urls'],
     exclude: ['/admin/**'],
-  },
-
-  supabase: {
-    redirect: false,
-    types: '~~/shared/types/database.ts',
-    cookieOptions: {
-      maxAge: 60 * 60 * 12,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-    },
   },
 })

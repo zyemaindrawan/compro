@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 
 const [email, ...nameParts] = process.argv.slice(2)
 const displayName = nameParts.join(' ') || 'Admin'
-const url = process.env.NUXT_PUBLIC_SUPABASE_URL
+const url = process.env.NUXT_SUPABASE_URL
 const secretKey = process.env.NUXT_SUPABASE_SECRET_KEY
 
 if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -11,7 +11,7 @@ if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
   process.exit(1)
 }
 if (!url || !secretKey) {
-  console.error('Set NUXT_PUBLIC_SUPABASE_URL and NUXT_SUPABASE_SECRET_KEY first.')
+  console.error('Set NUXT_SUPABASE_URL and NUXT_SUPABASE_SECRET_KEY first.')
   process.exit(1)
 }
 

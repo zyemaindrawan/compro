@@ -25,7 +25,7 @@ async function requireAdminSession(db: Db) {
 
 async function login(event: H3Event) {
   const input = await validateBody(event, loginSchema)
-  const db = await useDb(event)
+  const db = useDb(event)
   const user = await authModel.signIn(db, input.email, input.password)
 
   const profile = await adminModel.findProfile(db, user.id)
@@ -38,13 +38,13 @@ async function login(event: H3Event) {
 }
 
 async function logout(event: H3Event) {
-  const db = await useDb(event)
+  const db = useDb(event)
   await authModel.signOut(db)
   return { ok: true }
 }
 
 async function session(event: H3Event) {
-  const db = await useDb(event)
+  const db = useDb(event)
   const claims = await authModel.getClaims(db)
   if (!claims) return { authenticated: false, isAdmin: false, next: null }
 
@@ -60,7 +60,7 @@ async function session(event: H3Event) {
 }
 
 async function enroll(event: H3Event) {
-  const db = await useDb(event)
+  const db = useDb(event)
   await requireAdminSession(db)
 
   const factors = await authModel.listFactors(db)
@@ -75,7 +75,7 @@ async function enroll(event: H3Event) {
 
 async function verify(event: H3Event) {
   const input = await validateBody(event, mfaCodeSchema)
-  const db = await useDb(event)
+  const db = useDb(event)
   await requireAdminSession(db)
 
   const factors = await authModel.listFactors(db)
