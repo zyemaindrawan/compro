@@ -2,6 +2,10 @@ const siteUrl = process.env.NUXT_SITE_URL || 'http://localhost:3000'
 const supabaseUrl = process.env.NUXT_SUPABASE_URL || 'http://127.0.0.1:54321'
 const minute = 60_000
 
+function limit(tokensPerInterval: number, headers = false) {
+  return { tokensPerInterval, interval: minute, headers, ipHeader: 'x-compro-client-ip' }
+}
+
 export default defineNuxtConfig({
 
   modules: [
@@ -48,6 +52,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     ipHashSalt: '',
+    trustProxy: '',
     supabase: {
       url: supabaseUrl,
       key: '',
@@ -76,30 +81,30 @@ export default defineNuxtConfig({
     '/admin/**': { ssr: false, robots: false },
     '/api/**': { robots: false },
     '/api/auth/login': {
-      security: { rateLimiter: { tokensPerInterval: 5, interval: minute, headers: true } },
+      security: { rateLimiter: limit(5, true) },
     },
     '/api/auth/mfa/**': {
-      security: { rateLimiter: { tokensPerInterval: 5, interval: minute, headers: true } },
+      security: { rateLimiter: limit(5, true) },
     },
     '/api/admin/**': {
-      security: { rateLimiter: { tokensPerInterval: 60, interval: minute } },
+      security: { rateLimiter: limit(60) },
     },
     '/api/public/submissions/**': {
       security: {
-        rateLimiter: { tokensPerInterval: 3, interval: minute, headers: true },
+        rateLimiter: limit(3, true),
         xssValidator: false,
         requestSizeLimiter: { maxRequestSizeInBytes: 64_000 },
       },
     },
     '/api/admin/media': {
       security: {
-        rateLimiter: { tokensPerInterval: 30, interval: minute },
+        rateLimiter: limit(30),
         requestSizeLimiter: { maxRequestSizeInBytes: 1_000_000, maxUploadFileRequestInBytes: 10_000_000 },
       },
     },
     '/api/public/**': {
       security: {
-        rateLimiter: { tokensPerInterval: 120, interval: minute },
+        rateLimiter: limit(120),
         xssValidator: { methods: ['GET', 'POST'] },
       },
     },

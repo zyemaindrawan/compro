@@ -82,8 +82,8 @@ async function submit(event: H3Event) {
   const values = parseWith(buildSubmissionSchema(target.form.fields), envelope.values)
 
   if (!envelope.turnstileToken) fail(422, 'Please complete the verification.', TURNSTILE_FIELD)
-  const ip = getRequestIP(event, { xForwardedFor: true })
-  const human = await turnstileService.verify(envelope.turnstileToken, ip)
+  const ip = clientIp(event)
+  const human = await turnstileService.verify(envelope.turnstileToken, ip || undefined)
   if (!human) fail(422, 'Verification failed. Please try again.', TURNSTILE_FIELD)
 
   const isSpam = spamService.isLikelyBot({ honeypot: envelope.website, token: spamService.checkToken(envelope.formToken) })
