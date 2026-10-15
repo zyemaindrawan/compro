@@ -29,6 +29,7 @@ const navigation = computed<NavigationMenuItem[][]>(() => [
   ],
   [
     { label: 'Settings', icon: 'i-lucide-settings-2', to: '/admin/settings' },
+    { label: 'Redirects', icon: 'i-lucide-corner-down-right', to: '/admin/redirects' },
     { label: 'View site', icon: 'i-lucide-external-link', to: '/', target: '_blank' },
   ],
 ])

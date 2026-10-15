@@ -391,3 +391,11 @@ export interface PortfolioPageData {
   items: PortfolioItem[]
   services: { id: string, name: string, slug: string }[]
 }
+
+export interface AdminRedirect {
+  id: string
+  fromPath: string
+  toPath: string
+  statusCode: 301 | 302 | 308
+  updatedAt: string
+}

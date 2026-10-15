@@ -30,3 +30,7 @@ export const MEDIA_ACCEPTED_TYPES = [
 ] as const
 
 export const ADMIN_PAGE_SIZE = 24
+
+export const REDIRECT_RESERVED_PATH = /^\/(api|_nuxt|__|admin)(\/|$)/i
+export const REDIRECT_SKIPPED_FILE = /\.(?!(html?|php|aspx?)$)[a-z0-9]+$/i
+export const REDIRECT_STATUS_CODES = [301, 302, 308] as const
