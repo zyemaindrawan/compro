@@ -184,6 +184,10 @@ export default defineNuxtConfig({
     disallow: ['/admin', '/api/admin', '/api/auth'],
   },
 
+  skewProtection: {
+    enabled: false,
+  },
+
   security: {
     nonce: true,
     rateLimiter: false,
