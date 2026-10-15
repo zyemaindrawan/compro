@@ -14,3 +14,5 @@ playwright-report
 supabase/.branches
 supabase/.temp
 .DS_Store
+
+tests/e2e/.auth
