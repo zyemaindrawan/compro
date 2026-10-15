@@ -14,7 +14,7 @@ const companyLinks = [
 </script>
 
 <template>
-  <footer class="border-t border-default bg-muted/40">
+  <footer class="border-t border-default bg-muted/40 [contain-intrinsic-size:auto_480px] [content-visibility:auto]">
     <AppContainer class="grid gap-10 py-14 md:grid-cols-12">
       <div class="space-y-4 md:col-span-4">
         <AppLogo />

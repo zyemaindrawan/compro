@@ -116,7 +116,7 @@ function onTabKey(event: KeyboardEvent, index: number) {
 
       <div
         v-if="active.features.length"
-        class="space-y-4"
+        class="space-y-4 [contain-intrinsic-size:auto_800px] [content-visibility:auto]"
       >
         <h3 class="font-display text-xl font-semibold text-highlighted">
           Compare plans
