@@ -9,16 +9,15 @@ const items = computed(() => props.data.portfolio[`${props.block.service_id ?? '
 
 <template>
   <section v-if="items.length">
-    <UContainer class="space-y-10 py-16 sm:py-24">
+    <AppContainer class="space-y-10 py-16 sm:py-24">
       <SectionHeader :heading="block.heading">
         <template #actions>
-          <UButton
+          <BaseButton
             to="/portfolio"
             label="All work"
             trailing-icon="i-lucide-arrow-right"
             color="neutral"
             variant="link"
-            class="px-0"
           />
         </template>
       </SectionHeader>
@@ -26,6 +25,6 @@ const items = computed(() => props.data.portfolio[`${props.block.service_id ?? '
         :items="items"
         :heading-level="block.heading ? 'h3' : 'h2'"
       />
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

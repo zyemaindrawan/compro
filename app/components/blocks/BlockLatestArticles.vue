@@ -10,20 +10,19 @@ const moreLink = computed(() => (props.block.category_slug ? `/articles/category
 
 <template>
   <section v-if="articles.length">
-    <UContainer class="space-y-10 py-16 sm:py-24">
+    <AppContainer class="space-y-10 py-16 sm:py-24">
       <SectionHeader :heading="block.heading">
         <template #actions>
-          <UButton
+          <BaseButton
             :to="moreLink"
             label="All articles"
             trailing-icon="i-lucide-arrow-right"
             color="neutral"
             variant="link"
-            class="px-0"
           />
         </template>
       </SectionHeader>
       <ArticleGrid :articles="articles" />
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

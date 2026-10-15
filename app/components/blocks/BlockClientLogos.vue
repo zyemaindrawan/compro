@@ -13,7 +13,7 @@ const marquee = computed(() => settings.value?.marquee ?? { autoplay: true, spee
     v-if="data.logos.length"
     :aria-label="block.heading || 'Clients'"
   >
-    <UContainer class="space-y-8 py-12 sm:py-16">
+    <AppContainer class="space-y-8 py-12 sm:py-16">
       <h2
         v-if="block.heading"
         class="text-center text-sm font-medium text-muted"
@@ -24,6 +24,6 @@ const marquee = computed(() => settings.value?.marquee ?? { autoplay: true, spee
         :logos="data.logos"
         :marquee="marquee"
       />
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

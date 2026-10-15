@@ -30,7 +30,7 @@ useItemListSchema(data.value.items.map(item => ({ name: item.title, url: item.ex
 
 <template>
   <div>
-    <UContainer class="space-y-10 py-14 sm:py-20">
+    <AppContainer class="space-y-10 py-14 sm:py-20">
       <div class="max-w-2xl space-y-3">
         <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
           Portfolio
@@ -47,7 +47,7 @@ useItemListSchema(data.value.items.map(item => ({ name: item.title, url: item.ex
       >
         <ul class="flex gap-2">
           <li>
-            <UButton
+            <BaseButton
               label="All"
               size="sm"
               :color="active ? 'neutral' : 'primary'"
@@ -60,7 +60,7 @@ useItemListSchema(data.value.items.map(item => ({ name: item.title, url: item.ex
             v-for="service in data.services"
             :key="service.id"
           >
-            <UButton
+            <BaseButton
               :label="service.name"
               size="sm"
               :color="active === service.slug ? 'primary' : 'neutral'"
@@ -85,7 +85,7 @@ useItemListSchema(data.value.items.map(item => ({ name: item.title, url: item.ex
         title="Projects are being added"
         description="Ask us for case studies relevant to your project."
       />
-    </UContainer>
+    </AppContainer>
     <BlockCta :block="{ heading: 'Have a similar project?', body: 'Send the scope and timeline. We reply within two business days with an estimate.', primary: { label: 'Request a quote', href: '/quote' } }" />
   </div>
 </template>

@@ -6,7 +6,7 @@ defineProps<{ block: BlockProps<'cta'> }>()
 
 <template>
   <section class="bg-inverted text-inverted">
-    <UContainer class="flex flex-col gap-8 py-16 sm:py-20 lg:flex-row lg:items-end lg:justify-between">
+    <AppContainer class="flex flex-col gap-8 py-16 sm:py-20 lg:flex-row lg:items-end lg:justify-between">
       <div class="max-w-2xl space-y-3">
         <h2 class="font-display text-3xl font-bold text-balance sm:text-4xl">
           {{ block.heading }}
@@ -23,6 +23,6 @@ defineProps<{ block: BlockProps<'cta'> }>()
         color="primary"
         trailing-icon="i-lucide-arrow-right"
       />
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

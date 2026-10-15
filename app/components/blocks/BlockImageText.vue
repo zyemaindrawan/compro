@@ -10,7 +10,7 @@ const paragraphs = computed(() => props.block.body.split(/\n{2,}/).map(part => p
 
 <template>
   <section>
-    <UContainer class="grid gap-10 py-14 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16">
+    <AppContainer class="grid gap-10 py-14 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16">
       <SmartImage
         v-if="media"
         v-reveal
@@ -40,6 +40,6 @@ const paragraphs = computed(() => props.block.body.split(/\n{2,}/).map(part => p
           trailing-icon="i-lucide-arrow-right"
         />
       </div>
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

@@ -32,7 +32,7 @@ useItemListSchema(
 </script>
 
 <template>
-  <UContainer class="space-y-10 py-14 sm:py-20">
+  <AppContainer class="space-y-10 py-14 sm:py-20">
     <header class="space-y-6">
       <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div class="max-w-2xl space-y-3">
@@ -50,10 +50,10 @@ useItemListSchema(
             class="text-muted"
           >
             {{ articles?.total ?? 0 }} {{ articles?.total === 1 ? 'article' : 'articles' }} found.
-            <ULink
+            <NuxtLink
               to="/articles"
               class="text-primary underline-offset-4 hover:underline"
-            >Clear search</ULink>
+            >Clear search</NuxtLink>
           </p>
         </div>
         <ArticleSearch />
@@ -90,5 +90,5 @@ useItemListSchema(
       :total="articles.total"
       :per-page="articles.perPage"
     />
-  </UContainer>
+  </AppContainer>
 </template>

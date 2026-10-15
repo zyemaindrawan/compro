@@ -6,11 +6,14 @@ defineProps<{ block: BlockProps<'rich_text'> }>()
 
 <template>
   <section>
-    <UContainer class="max-w-3xl py-14 sm:py-20">
+    <AppContainer
+      width="3xl"
+      class="py-14 sm:py-20"
+    >
       <div
         class="article-body prose max-w-none prose-lg"
         v-html="block.content_html"
       />
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

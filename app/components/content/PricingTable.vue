@@ -90,13 +90,10 @@ function onTabKey(event: KeyboardEvent, index: number) {
               <h3 class="font-display text-xl font-semibold text-highlighted">
                 {{ plan.name }}
               </h3>
-              <UBadge
+              <span
                 v-if="plan.isPopular"
-                label="Most chosen"
-                color="primary"
-                variant="subtle"
-                size="sm"
-              />
+                class="inline-flex items-center rounded-sm bg-primary/10 px-1.5 py-1 text-[10px]/3 font-medium text-primary ring ring-primary/25 ring-inset"
+              >Most chosen</span>
             </div>
             <p class="text-sm text-muted">
               {{ plan.description }}
@@ -106,7 +103,7 @@ function onTabKey(event: KeyboardEvent, index: number) {
             <span class="font-display text-3xl font-bold text-highlighted tabular-nums">{{ format.currency(plan.price) }}</span>
             <span class="text-sm text-muted">{{ plan.priceSuffix }}</span>
           </p>
-          <UButton
+          <BaseButton
             :to="quoteLink(plan.slug)"
             :label="plan.ctaLabel"
             :color="plan.isPopular ? 'primary' : 'neutral'"

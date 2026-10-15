@@ -13,7 +13,7 @@ const services = computed(() => {
 
 <template>
   <section v-if="services.length">
-    <UContainer class="space-y-10 py-16 sm:py-24">
+    <AppContainer class="space-y-10 py-16 sm:py-24">
       <SectionHeader
         :heading="block.heading"
         :intro="block.intro"
@@ -22,6 +22,6 @@ const services = computed(() => {
         :services="services"
         :heading-level="block.heading ? 'h3' : 'h2'"
       />
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

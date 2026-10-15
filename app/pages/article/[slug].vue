@@ -53,19 +53,14 @@ useSchemaOrg([
 
 <template>
   <div>
-    <UAlert
-      v-if="previewId"
-      title="Preview"
-      description="Only signed-in admins can see this page until it is published."
-      icon="i-lucide-eye"
-      color="warning"
-      variant="subtle"
-      :ui="{ root: 'rounded-none justify-center' }"
-    />
+    <PreviewBanner v-if="previewId" />
 
     <article class="py-12 sm:py-16">
-      <UContainer class="max-w-3xl space-y-6">
-        <UBreadcrumb
+      <AppContainer
+        width="3xl"
+        class="space-y-6"
+      >
+        <AppBreadcrumb
           :items="[
             { label: 'Articles', to: '/articles' },
             ...(primaryCategory ? [{ label: primaryCategory.name, to: `/articles/category/${primaryCategory.slug}` }] : []),
@@ -96,11 +91,12 @@ useSchemaOrg([
           <span aria-hidden="true">·</span>
           <span>{{ article.readingMinutes }} min read</span>
         </div>
-      </UContainer>
+      </AppContainer>
 
-      <UContainer
+      <AppContainer
         v-if="article.cover"
-        class="mt-10 max-w-5xl"
+        width="5xl"
+        class="mt-10"
       >
         <SmartImage
           :media="article.cover"
@@ -109,9 +105,12 @@ useSchemaOrg([
           sizes="(min-width: 1024px) 1024px, 100vw"
           class="aspect-[16/9] w-full rounded-lg border border-default object-cover"
         />
-      </UContainer>
+      </AppContainer>
 
-      <UContainer class="mt-10 max-w-3xl space-y-12">
+      <AppContainer
+        width="3xl"
+        class="mt-10 space-y-12"
+      >
         <div
           class="article-body prose max-w-none prose-lg"
           v-html="article.contentHtml"
@@ -127,14 +126,10 @@ useSchemaOrg([
                 v-for="category in article.categories"
                 :key="category.slug"
               >
-                <UBadge
-                  :label="category.name"
-                  color="neutral"
-                  variant="outline"
-                  class="hover:bg-elevated"
-                >
-                  <NuxtLink :to="`/articles/category/${category.slug}`">{{ category.name }}</NuxtLink>
-                </UBadge>
+                <NuxtLink
+                  :to="`/articles/category/${category.slug}`"
+                  class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-default ring ring-accented ring-inset transition-colors hover:bg-elevated"
+                >{{ category.name }}</NuxtLink>
               </li>
             </ul>
             <ShareLinks
@@ -147,7 +142,7 @@ useSchemaOrg([
             :author="article.author"
           />
         </div>
-      </UContainer>
+      </AppContainer>
     </article>
 
     <section
@@ -155,7 +150,7 @@ useSchemaOrg([
       class="border-t border-default bg-muted/40 py-14 sm:py-20"
       aria-labelledby="read-more"
     >
-      <UContainer class="space-y-8">
+      <AppContainer class="space-y-8">
         <h2
           id="read-more"
           class="font-display text-2xl font-bold text-highlighted"
@@ -163,7 +158,7 @@ useSchemaOrg([
           Read more
         </h2>
         <ArticleGrid :articles="related" />
-      </UContainer>
+      </AppContainer>
     </section>
   </div>
 </template>

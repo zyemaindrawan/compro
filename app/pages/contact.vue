@@ -12,7 +12,7 @@ useSchemaOrg([defineWebPage({ '@type': 'ContactPage' })])
 </script>
 
 <template>
-  <UContainer class="grid gap-12 py-14 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-20">
+  <AppContainer class="grid gap-12 py-14 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-20">
     <div class="space-y-10">
       <div class="space-y-3">
         <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
@@ -49,5 +49,5 @@ useSchemaOrg([defineWebPage({ '@type': 'ContactPage' })])
         description="Email or WhatsApp us using the details on this page."
       />
     </div>
-  </UContainer>
+  </AppContainer>
 </template>

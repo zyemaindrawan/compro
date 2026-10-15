@@ -9,7 +9,7 @@ const faqs = computed(() => (props.block.group ? props.data.faqs.filter(faq => f
 
 <template>
   <section v-if="faqs.length">
-    <UContainer class="grid gap-10 py-16 sm:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16">
+    <AppContainer class="grid gap-10 py-16 sm:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16">
       <div class="space-y-4">
         <h2 class="font-display text-3xl font-bold text-balance text-highlighted sm:text-4xl">
           {{ block.heading || 'Frequently asked questions' }}
@@ -23,6 +23,6 @@ const faqs = computed(() => (props.block.group ? props.data.faqs.filter(faq => f
         </p>
       </div>
       <FaqList :faqs="faqs" />
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

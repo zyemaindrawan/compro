@@ -13,14 +13,15 @@ useSchemaOrg([
 <template>
   <div v-if="page">
     <PreviewBanner v-if="previewing" />
-    <UContainer
+    <AppContainer
       v-if="page.blocks[0]?.type !== 'hero'"
-      class="max-w-3xl pt-14 sm:pt-20"
+      width="3xl"
+      class="pt-14 sm:pt-20"
     >
       <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
         {{ page.title }}
       </h1>
-    </UContainer>
+    </AppContainer>
     <BlockRenderer
       :blocks="page.blocks"
       :data="page.data"

@@ -13,7 +13,7 @@ const media = computed(() => (props.block.media_id ? props.data.media[props.bloc
 
 <template>
   <section class="border-b border-default">
-    <UContainer
+    <AppContainer
       class="grid gap-12 py-20 sm:py-28 lg:items-center"
       :class="media ? 'lg:grid-cols-2' : ''"
     >
@@ -58,6 +58,6 @@ const media = computed(() => (props.block.media_id ? props.data.media[props.bloc
         sizes="(min-width: 1024px) 50vw, 100vw"
         class="w-full rounded-lg border border-default object-cover"
       />
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

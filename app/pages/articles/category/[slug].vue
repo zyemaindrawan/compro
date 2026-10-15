@@ -44,12 +44,12 @@ useItemListSchema(
 </script>
 
 <template>
-  <UContainer
+  <AppContainer
     v-if="category"
     class="space-y-10 py-14 sm:py-20"
   >
     <header class="space-y-6">
-      <UBreadcrumb :items="[{ label: 'Articles', to: '/articles' }, { label: category.name }]" />
+      <AppBreadcrumb :items="[{ label: 'Articles', to: '/articles' }, { label: category.name }]" />
       <div class="max-w-2xl space-y-3">
         <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
           {{ category.name }}
@@ -78,7 +78,7 @@ useItemListSchema(
       title="No articles in this category yet"
       description="Browse all articles instead."
     >
-      <UButton
+      <BaseButton
         to="/articles"
         label="All articles"
         color="neutral"
@@ -92,5 +92,5 @@ useItemListSchema(
       :total="articles.total"
       :per-page="articles.perPage"
     />
-  </UContainer>
+  </AppContainer>
 </template>

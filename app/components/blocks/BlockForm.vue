@@ -9,12 +9,12 @@ const form = computed(() => props.data.forms[props.block.form_key] ?? null)
 
 <template>
   <section v-if="form">
-    <UContainer class="grid gap-10 py-16 sm:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:gap-16">
+    <AppContainer class="grid gap-10 py-16 sm:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:gap-16">
       <SectionHeader
         :heading="block.heading"
         :intro="block.intro"
       />
       <DynamicForm :form="form" />
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

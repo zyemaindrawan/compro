@@ -15,7 +15,7 @@ const links = computed(() => [
 <template>
   <div class="flex flex-wrap items-center gap-1">
     <span class="me-2 text-sm text-muted">Share</span>
-    <UButton
+    <BaseButton
       v-for="link in links"
       :key="link.label"
       :to="link.href"
@@ -27,7 +27,7 @@ const links = computed(() => [
       variant="ghost"
       size="sm"
     />
-    <UButton
+    <BaseButton
       :icon="copied ? 'i-lucide-check' : 'i-lucide-link'"
       :aria-label="copied ? 'Link copied' : 'Copy link'"
       color="neutral"

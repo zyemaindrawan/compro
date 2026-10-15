@@ -40,7 +40,7 @@ const links = [
 
 <template>
   <NuxtLayout :name="isAdmin ? 'auth' : 'default'">
-    <UContainer class="py-24 sm:py-32">
+    <AppContainer class="py-24 sm:py-32">
       <div class="max-w-xl space-y-6">
         <p class="font-mono text-sm text-primary">
           {{ error.statusCode }}
@@ -52,13 +52,13 @@ const links = [
           {{ message }}
         </p>
         <div class="flex flex-wrap gap-3">
-          <UButton
+          <BaseButton
             v-if="!notFound"
             label="Try again"
             icon="i-lucide-rotate-cw"
             @click="clearError({ redirect: useRoute().fullPath })"
           />
-          <UButton
+          <BaseButton
             :label="isAdmin ? 'Back to dashboard' : 'Back to home'"
             :color="notFound ? 'primary' : 'neutral'"
             :variant="notFound ? 'solid' : 'outline'"
@@ -75,12 +75,12 @@ const links = [
               v-for="link in links"
               :key="link.to"
             >
-              <ULink
+              <NuxtLink
                 :to="link.to"
                 class="text-muted underline-offset-4 hover:text-default hover:underline"
               >
                 {{ link.label }}
-              </ULink>
+              </NuxtLink>
             </li>
           </ul>
         </nav>
@@ -88,12 +88,12 @@ const links = [
           v-if="!notFound && settings?.email"
           class="text-sm text-muted"
         >
-          Contact: <ULink
+          Contact: <NuxtLink
             :to="`mailto:${settings.email}`"
             class="underline underline-offset-4"
-          >{{ settings.email }}</ULink>
+          >{{ settings.email }}</NuxtLink>
         </p>
       </div>
-    </UContainer>
+    </AppContainer>
   </NuxtLayout>
 </template>

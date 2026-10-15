@@ -7,7 +7,7 @@ function toggle() {
 </script>
 
 <template>
-  <UButton
+  <BaseButton
     color="neutral"
     variant="ghost"
     square
@@ -22,5 +22,5 @@ function toggle() {
       name="i-lucide-moon"
       class="hidden size-5 dark:block"
     />
-  </UButton>
+  </BaseButton>
 </template>

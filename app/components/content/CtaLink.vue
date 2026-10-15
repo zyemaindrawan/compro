@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import type { ButtonProps } from '@nuxt/ui'
-
 const props = defineProps<{
   link: { label: string, href: string }
-  color?: ButtonProps['color']
-  variant?: ButtonProps['variant']
-  size?: ButtonProps['size']
+  color?: 'primary' | 'neutral'
+  variant?: 'solid' | 'outline' | 'ghost' | 'link'
+  size?: 'sm' | 'md' | 'lg'
   trailingIcon?: string
 }>()
 
@@ -13,7 +11,7 @@ const external = computed(() => /^https?:\/\//.test(props.link.href))
 </script>
 
 <template>
-  <UButton
+  <BaseButton
     v-if="link.label && link.href"
     :to="link.href"
     :label="link.label"

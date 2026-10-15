@@ -14,7 +14,7 @@ useItemListSchema(services.value.map(service => ({ name: service.name, url: `/se
 
 <template>
   <div>
-    <UContainer class="space-y-12 py-14 sm:py-20">
+    <AppContainer class="space-y-12 py-14 sm:py-20">
       <div class="max-w-2xl space-y-3">
         <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
           Services
@@ -27,7 +27,7 @@ useItemListSchema(services.value.map(service => ({ name: service.name, url: `/se
         :services="services"
         heading-level="h2"
       />
-    </UContainer>
+    </AppContainer>
     <BlockCta :block="{ heading: 'Not sure where to start?', body: 'Describe the problem. We will tell you which service fits, or if none does.', primary: { label: 'Request a quote', href: '/quote' } }" />
   </div>
 </template>

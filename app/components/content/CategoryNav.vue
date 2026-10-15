@@ -14,7 +14,7 @@ defineProps<{
   >
     <ul class="flex gap-2">
       <li>
-        <UButton
+        <BaseButton
           to="/articles"
           label="All"
           size="sm"
@@ -26,7 +26,7 @@ defineProps<{
         v-for="category in categories"
         :key="category.slug"
       >
-        <UButton
+        <BaseButton
           :to="`/articles/category/${category.slug}`"
           size="sm"
           :color="active === category.slug ? 'primary' : 'neutral'"
@@ -35,7 +35,7 @@ defineProps<{
         >
           {{ category.name }}
           <span class="tabular-nums opacity-60">{{ category.articleCount }}</span>
-        </UButton>
+        </BaseButton>
       </li>
     </ul>
   </nav>

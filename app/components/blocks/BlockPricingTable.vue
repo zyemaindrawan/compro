@@ -15,12 +15,12 @@ const groups = computed(() => {
     v-if="groups.length"
     class="border-y border-default bg-muted/40"
   >
-    <UContainer class="space-y-10 py-16 sm:py-24">
+    <AppContainer class="space-y-10 py-16 sm:py-24">
       <SectionHeader
         :heading="block.heading"
         :intro="block.intro"
       />
       <PricingTable :groups="groups" />
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

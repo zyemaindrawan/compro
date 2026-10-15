@@ -6,7 +6,7 @@ defineProps<{ block: BlockProps<'stats'> }>()
 
 <template>
   <section class="border-y border-default">
-    <UContainer class="space-y-10 py-16 sm:py-20">
+    <AppContainer class="space-y-10 py-16 sm:py-20">
       <h2
         v-if="block.heading"
         class="text-sm font-medium text-muted"
@@ -28,6 +28,6 @@ defineProps<{ block: BlockProps<'stats'> }>()
           </dd>
         </div>
       </dl>
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

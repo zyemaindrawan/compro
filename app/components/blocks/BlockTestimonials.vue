@@ -11,7 +11,7 @@ const rest = computed(() => testimonials.value.slice(1))
 
 <template>
   <section v-if="featured">
-    <UContainer class="grid gap-10 py-16 sm:py-24 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-16">
+    <AppContainer class="grid gap-10 py-16 sm:py-24 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-16">
       <div class="space-y-10">
         <SectionHeader :heading="block.heading" />
         <TestimonialCard
@@ -31,6 +31,6 @@ const rest = computed(() => testimonials.value.slice(1))
           <TestimonialCard :testimonial="testimonial" />
         </li>
       </ul>
-    </UContainer>
+    </AppContainer>
   </section>
 </template>

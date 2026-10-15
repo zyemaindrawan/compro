@@ -35,7 +35,7 @@ useSchemaOrg([defineWebPage()])
 </script>
 
 <template>
-  <UContainer class="grid gap-12 py-14 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-20">
+  <AppContainer class="grid gap-12 py-14 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-20">
     <div class="space-y-8">
       <div class="space-y-3">
         <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
@@ -94,5 +94,5 @@ useSchemaOrg([defineWebPage()])
         description="Email us your brief and we will reply within two business days."
       />
     </div>
-  </UContainer>
+  </AppContainer>
 </template>

@@ -25,7 +25,7 @@ watch(() => route.fullPath, () => {
 
 <template>
   <header class="sticky top-0 z-40 border-b border-default/60 bg-default/90 backdrop-blur">
-    <UContainer class="flex h-(--ui-header-height) items-center justify-between gap-6">
+    <AppContainer class="flex h-(--ui-header-height) items-center justify-between gap-6">
       <AppLogo />
 
       <nav
@@ -79,12 +79,13 @@ watch(() => route.fullPath, () => {
 
       <div class="flex items-center gap-1.5">
         <ThemeToggle />
-        <UButton
-          to="/quote"
-          label="Get a quote"
-          class="hidden sm:inline-flex"
-        />
-        <UButton
+        <span class="hidden sm:inline-flex">
+          <BaseButton
+            to="/quote"
+            label="Get a quote"
+          />
+        </span>
+        <BaseButton
           icon="i-lucide-menu"
           color="neutral"
           variant="ghost"
@@ -93,7 +94,7 @@ watch(() => route.fullPath, () => {
           @click="openMenu"
         />
       </div>
-    </UContainer>
+    </AppContainer>
 
     <LazyUSlideover
       v-if="menuLoaded"
@@ -140,7 +141,7 @@ watch(() => route.fullPath, () => {
             </li>
           </ul>
         </nav>
-        <UButton
+        <BaseButton
           to="/quote"
           label="Get a quote"
           block

@@ -15,7 +15,7 @@ const companyLinks = [
 
 <template>
   <footer class="border-t border-default bg-muted/40">
-    <UContainer class="grid gap-10 py-14 md:grid-cols-12">
+    <AppContainer class="grid gap-10 py-14 md:grid-cols-12">
       <div class="space-y-4 md:col-span-4">
         <AppLogo />
         <p
@@ -33,7 +33,7 @@ const companyLinks = [
             v-for="link in settings.socialLinks"
             :key="link.id"
           >
-            <UButton
+            <BaseButton
               :to="link.url"
               target="_blank"
               rel="noopener noreferrer"
@@ -58,12 +58,12 @@ const companyLinks = [
             v-for="service in services"
             :key="service.slug"
           >
-            <ULink
+            <NuxtLink
               :to="`/services/${service.slug}`"
               class="text-muted hover:text-default"
             >
               {{ service.name }}
-            </ULink>
+            </NuxtLink>
           </li>
         </ul>
       </nav>
@@ -80,12 +80,12 @@ const companyLinks = [
             v-for="link in companyLinks"
             :key="link.to"
           >
-            <ULink
+            <NuxtLink
               :to="link.to"
               class="text-muted hover:text-default"
             >
               {{ link.label }}
-            </ULink>
+            </NuxtLink>
           </li>
         </ul>
       </nav>
@@ -101,20 +101,20 @@ const companyLinks = [
           {{ settings.address }}
         </p>
         <p v-if="settings?.email">
-          <ULink
+          <NuxtLink
             :to="`mailto:${settings.email}`"
             class="text-muted hover:text-default"
           >
             {{ settings.email }}
-          </ULink>
+          </NuxtLink>
         </p>
         <p v-if="settings?.phone">
-          <ULink
+          <NuxtLink
             :to="`tel:${settings.phone.replace(/[^+\d]/g, '')}`"
             class="text-muted hover:text-default"
           >
             {{ settings.phone }}
-          </ULink>
+          </NuxtLink>
         </p>
         <dl
           v-if="hours.length"
@@ -131,13 +131,13 @@ const companyLinks = [
           </template>
         </dl>
       </address>
-    </UContainer>
+    </AppContainer>
 
-    <UContainer class="flex flex-col gap-2 border-t border-default py-6 text-xs text-muted sm:flex-row sm:justify-between">
+    <AppContainer class="flex flex-col gap-2 border-t border-default py-6 text-xs text-muted sm:flex-row sm:justify-between">
       <p>© {{ year }} {{ settings?.siteName }}. All rights reserved.</p>
       <p v-if="settings?.timezone">
         Working hours in {{ settings.timezone.replace('_', ' ') }} time.
       </p>
-    </UContainer>
+    </AppContainer>
   </footer>
 </template>

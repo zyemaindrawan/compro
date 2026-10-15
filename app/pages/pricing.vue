@@ -14,7 +14,7 @@ useSchemaOrg([defineWebPage()])
 
 <template>
   <div>
-    <UContainer class="space-y-12 py-14 sm:py-20">
+    <AppContainer class="space-y-12 py-14 sm:py-20">
       <div class="max-w-2xl space-y-3">
         <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
           Pricing
@@ -34,7 +34,7 @@ useSchemaOrg([defineWebPage()])
         title="Prices are being updated"
         description="Request a quote and we will send current prices."
       />
-    </UContainer>
+    </AppContainer>
     <BlockCta :block="{ heading: 'Need something in between?', body: 'Tell us the scope and budget. We will propose a plan that fits.', primary: { label: 'Request a quote', href: '/quote' } }" />
   </div>
 </template>
