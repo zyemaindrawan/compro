@@ -62,13 +62,21 @@ set_env() {
   rm -f "$tmp"
 }
 
+clean_value() {
+  printf '%s' "$1" | tr -d '\r\n\t ' | sed -E "s/^[\"']//; s/[\"']$//; s#/+\$##"
+}
+
+# Keeps a valid existing value; otherwise prompts until the input matches the pattern.
 fill_env() {
-  local key="$1" label="$2" secret="${3:-}" value
-  [ -n "$(get_env "$key")" ] && return 0
+  local key="$1" label="$2" pattern="$3" secret="${4:-}" value
+  value="$(get_env "$key")"
+  [[ "$value" =~ $pattern ]] && return 0
+  [ -z "$value" ] || echo "$key in .env has an invalid format; enter it again."
   while true; do
     if [ -n "$secret" ]; then value="$(ask_secret "$label: ")"; else value="$(ask "$label: ")"; fi
-    [ -n "$value" ] && break
-    echo "A value is required."
+    value="$(clean_value "$value")"
+    [[ "$value" =~ $pattern ]] && break
+    echo "Invalid format for $key (expected: $label). Try again."
   done
   set_env "$key" "$value"
 }
@@ -120,12 +128,10 @@ configure_env() {
   set_env NUXT_SITE_URL "https://$DOMAIN"
   [ -n "$(get_env NUXT_TRUST_PROXY)" ] || set_env NUXT_TRUST_PROXY x-real-ip
   [ -n "$(get_env NUXT_IP_HASH_SALT)" ] || set_env NUXT_IP_HASH_SALT "$(openssl rand -base64 48 | tr -d '\n')"
-  case "$(get_env NUXT_SUPABASE_URL)" in
-    *127.0.0.1* | *localhost*) set_env NUXT_SUPABASE_URL "" ;;
-  esac
-  fill_env NUXT_SUPABASE_URL "Supabase project URL (https://<ref>.supabase.co)"
-  fill_env NUXT_SUPABASE_KEY "Supabase publishable key" secret
-  fill_env NUXT_SUPABASE_SECRET_KEY "Supabase secret key" secret
+  fill_env NUXT_SUPABASE_URL "Supabase project URL (https://<ref>.supabase.co, no trailing slash)" '^https://[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+  fill_env NUXT_SUPABASE_KEY "Supabase publishable key (sb_publishable_... or legacy anon eyJ...)" '^(sb_publishable_|eyJ)[A-Za-z0-9._-]+$' secret
+  fill_env NUXT_SUPABASE_SECRET_KEY "Supabase secret key (sb_secret_... or legacy service_role eyJ...)" '^(sb_secret_|eyJ)[A-Za-z0-9._-]+$' secret
+  [ "$(get_env NUXT_SUPABASE_KEY)" != "$(get_env NUXT_SUPABASE_SECRET_KEY)" ] || fail "the publishable key and the secret key are identical; check $ENV_FILE"
   chown "$DEPLOY_USER:$DEPLOY_USER" "$ENV_FILE"
   chmod 600 "$ENV_FILE"
 
