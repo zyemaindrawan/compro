@@ -4,8 +4,10 @@ import type { PortfolioItem } from '#shared/types/models'
 withDefaults(defineProps<{
   item: PortfolioItem
   headingLevel?: 'h2' | 'h3'
+  priority?: boolean
 }>(), {
   headingLevel: 'h3',
+  priority: false,
 })
 </script>
 
@@ -16,6 +18,7 @@ withDefaults(defineProps<{
         :media="item.thumbnail"
         :alt="item.thumbnail.alt || item.title"
         sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+        :priority="priority"
         class="aspect-[16/10] w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.015]"
       />
     </div>

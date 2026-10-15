@@ -123,6 +123,12 @@ export default defineNuxtConfig({
     strict: true,
   },
 
+  hooks: {
+    'build:manifest': (manifest) => {
+      for (const chunk of Object.values(manifest)) chunk.prefetch = false
+    },
+  },
+
   aiReady: {
     enabled: false,
   },

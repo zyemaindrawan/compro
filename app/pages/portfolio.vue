@@ -76,6 +76,7 @@ useSchemaOrg([defineWebPage({ '@type': 'CollectionPage' })])
         v-if="items.length"
         :items="items"
         heading-level="h2"
+        priority-first
       />
       <EmptyState
         v-else

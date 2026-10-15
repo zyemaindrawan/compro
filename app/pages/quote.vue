@@ -80,11 +80,12 @@ useSchemaOrg([defineWebPage()])
       <h2 class="sr-only">
         Project details
       </h2>
-      <DynamicForm
+      <LazyDynamicForm
         v-if="form"
         :form="form"
         :prefill="prefill"
         :context="{ service: serviceSlug, plan: planSlug }"
+        hydrate-on-visible
       />
       <EmptyState
         v-else

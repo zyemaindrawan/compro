@@ -37,9 +37,10 @@ useSchemaOrg([defineWebPage({ '@type': 'ContactPage' })])
       <h2 class="sr-only">
         Send a message
       </h2>
-      <DynamicForm
+      <LazyDynamicForm
         v-if="form"
         :form="form"
+        hydrate-on-visible
       />
       <EmptyState
         v-else

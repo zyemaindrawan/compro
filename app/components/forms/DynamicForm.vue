@@ -23,10 +23,12 @@ const formToken = ref('')
 const honeypot = ref('')
 const sending = ref(false)
 const attempted = ref(false)
+const ready = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 
 onMounted(async () => {
+  ready.value = true
   try {
     formToken.value = (await $fetch<{ token: string }>('/api/public/form-token')).token
   }
@@ -150,6 +152,7 @@ function startOver() {
         type="submit"
         :label="form.submitLabel"
         :loading="sending"
+        :disabled="!ready"
         size="lg"
         trailing-icon="i-lucide-arrow-right"
       />
