@@ -50,6 +50,7 @@ export default defineNuxtConfig({
 
   ui: {
     fonts: false,
+    experimental: { componentDetection: true },
     colorMode: true,
     theme: {
       colors: ['primary', 'neutral', 'success', 'warning', 'error', 'info'],
