@@ -23,6 +23,22 @@ The app listens on `127.0.0.1:3000` only. Nginx is the public entry point.
 - **Memory**: about 3 GB is free during the build. With less than 4 GB of RAM, add swap first (step 1). Without it, the build can be killed halfway; the running site is not affected when that happens.
 - **DNS**: the domain's A record points at the VPS.
 
+## Quick setup with `provision.sh`
+
+`scripts/deploy/provision.sh` runs steps 1–6 below in one go as root: deploy user, swap, bootstrap, `.env`, migrations, first deploy, PM2 on boot, and an Nginx site that proxies to the app. When the domain already points at the server, it also issues a Let's Encrypt certificate with certbot and redirects HTTP to HTTPS.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/zyemaindrawan/compro/main/scripts/deploy/provision.sh -o /root/provision.sh
+bash /root/provision.sh your-domain.com
+```
+
+- **Prompts**: it asks for the Supabase URL and keys and for the Postgres connection string (Session pooler, percent-encoded). Input for secrets is hidden. The connection string is used for the migration only and is not stored.
+- **Re-running**: the script is safe to run again. Values already in `.env` are kept, and pressing Enter at the connection-string prompt skips migrations.
+- **SSL later**: if DNS is not pointing at the server yet, the site is served over HTTP only. Once the A record is live, run `bash /www/wwwroot/compro/repo/scripts/deploy/provision.sh your-domain.com nginx`.
+- **Nginx file**: the site is written to `/www/server/panel/vhost/nginx/compro.conf`, outside aaPanel's site list. Do not also add the domain under **Website → Add site**.
+
+The manual steps follow.
+
 ## 1. Root steps (once)
 
 Run these as root, either in the aaPanel terminal or over SSH:
