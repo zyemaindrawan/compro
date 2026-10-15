@@ -25,6 +25,7 @@ usePageSeo({
 })
 
 useSchemaOrg([defineWebPage({ '@type': 'CollectionPage' })])
+useItemListSchema(data.value.items.map(item => ({ name: item.title, url: item.externalUrl })), { name: 'Portfolio' })
 </script>
 
 <template>

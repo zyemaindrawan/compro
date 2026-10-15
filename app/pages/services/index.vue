@@ -7,6 +7,9 @@ usePageSeo({
   title: 'Services',
   description: 'Web development, custom applications, Android apps and cloud infrastructure, delivered by one team.',
 })
+
+useSchemaOrg([defineWebPage({ '@type': 'CollectionPage' })])
+useItemListSchema(services.value.map(service => ({ name: service.name, url: `/services/${service.slug}` })), { name: 'Services' })
 </script>
 
 <template>

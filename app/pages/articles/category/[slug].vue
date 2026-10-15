@@ -37,6 +37,10 @@ useSchemaOrg([
     ],
   }),
 ])
+useItemListSchema(
+  (articles.value?.items ?? []).map(article => ({ name: article.title, url: `/article/${article.slug}` })),
+  { offset: (page.value - 1) * (articles.value?.perPage ?? 0), name: category.value.name },
+)
 </script>
 
 <template>
