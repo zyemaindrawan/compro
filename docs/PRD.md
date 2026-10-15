@@ -346,7 +346,7 @@ Card: WebP thumbnail, title, service label, external-link icon. Clicking opens `
 | Media | Grid library, upload (multi), alt text edit, usage-safe delete, copy URL |
 | Settings | Identity (site name, title template, tagline, logos, favicon, default OG image), Contact (phone, WhatsApp, default WhatsApp message, email, address, map URL, work hours per day), Social links (dynamic list: platform, URL, icon, order, active), Analytics (Umami ID + script URL), Localization (timezone) |
 | Account | Display name, avatar, bio, change password (requires the current password), move 2FA to a new device (verify the new factor before the old one is removed), sign out other sessions |
-| Redirects | List and edit 301 entries (auto-created on slug change) |
+| Redirects | List, search, add, edit and delete 301/302/308 rules (auto-created on slug change); loops rejected, chains flattened to one hop, legacy `.html`/`.php` paths supported |
 
 ### 7.3 Block builder
 Each block type = one Vue component + one Zod props schema + one admin editor form, wired in a single registry.
@@ -428,7 +428,7 @@ Every article, category, page and service supports: meta title, meta description
 | Authentication | Supabase Auth email + password, called from server routes (`/api/auth/*`) so rate limits apply. Public sign-up is disabled; admins are created with `pnpm admin:create`, which also creates the `admin_profiles` row |
 | 2FA | TOTP MFA mandatory. First login forces enrollment (QR + manual secret). Admin APIs and RLS require `aal2` |
 | Session | Supabase session cookies set by the server only: httpOnly, SameSite=Lax, Secure in production, 12 h lifetime. Changing the password signs out other sessions |
-| Rate limiting | `nuxt-security` rateLimiter: login and MFA 5 req/min/IP, form submit 3 req/min/IP, admin API 60 req/min/IP, uploads 30 req/min/IP, public API 120 req/min/IP. Supabase Auth's own limits stay enabled. The default store is in-memory, which fits a single Hostinger Node process. Measured behaviour: the limiter rejects the request after `limit + 1` (the first request only creates the bucket), so form submit allows 4 per minute. It keys on the socket address; behind Hostinger's proxy that may be the proxy for every visitor, so the IP header must be configured during the M5 deployment check |
+| Rate limiting | `nuxt-security` rateLimiter: login and MFA 5 req/min/IP, form submit 3 req/min/IP, admin API 60 req/min/IP, uploads 30 req/min/IP, public API 120 req/min/IP. Supabase Auth's own limits stay enabled. The default store is in-memory, which fits a single Hostinger Node process. Measured behaviour: the limiter rejects the request after `limit + 1` (the first request only creates the bucket), so login allows 6 and form submit 4 attempts per minute. Limits key on the visitor IP resolved from `NUXT_TRUST_PROXY`; client-sent forwarding headers are ignored unless that header is trusted |
 | Headers | CSP (nonce-based), HSTS, `X-Content-Type-Options`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, frame-ancestors `none` |
 | Input | Zod validation on every controller; request body size limit 1 MB (uploads 10 MB) |
 | Output | Sanitized HTML only; no `v-html` on unsanitized data |
@@ -500,6 +500,9 @@ All server errors are logged with route, user id (if any) and a request id that 
 - Umami script `defer`, loaded after hydration.
 - Static assets are pre-compressed (`compressPublicAssets`); SSR HTML is compressed with Brotli or gzip by `server/plugins/compress-html.ts`.
 - The public header is plain markup with a CSS-only services menu; Nuxt UI overlay-heavy components stay out of public pages.
+- Public pages use `AppContainer`, `BaseButton`, `AppBreadcrumb` and `AppPagination` (classes copied from the Nuxt UI theme) instead of Nuxt UI components; only `UIcon`, the lazy mobile-menu slideover and the lazy form controls remain. `<UApp>` wraps the admin and auth layouts only.
+- The footer hydrates when visible, the WhatsApp button never hydrates, and the first hero hydrates on interaction.
+- CI fails when any public page's entry, layout and page JS exceeds 200 KB gzip.
 - The client build manifest has prefetch turned off (`build:manifest` hook in `nuxt.config.ts`), so public pages do not download the admin layout in the background. `NuxtLink` still prefetches page chunks on visibility.
 - Forms (`DynamicForm`) hydrate on visibility; the Zod validator and form controls are not in the initial bundle of `/contact` and `/quote`.
 
@@ -526,11 +529,43 @@ After M4 (two Lighthouse runs per page; initial JS counts `modulepreload` and mo
 
 Best practices on the form pages is 93 only because the sandbox that ran the audit blocks `challenges.cloudflare.com`, which logs a failed request. Before the prefetch and lazy-hydration fixes, the form pages shipped 249 KB and every public page prefetched about 100 KB of admin code. The service page is 1 KB over budget and is part of the M5 performance pass.
 
+After M5 (production build on the sandbox, Lighthouse 12 mobile, simulated throttling, median of 5 runs; initial JS from `scripts/perf/initial-js.mjs`):
+
+| Page | Performance (runs) | Accessibility | Best practices | SEO | LCP | TBT | CLS | Initial JS |
+|---|---|---|---|---|---|---|---|---|
+| `/` | 89 (84–91) | 100 | 100 | 100 | 2.8 s | 210 ms | 0 | 141 KB |
+| `/articles` | 91 (90–92) | 100 | 100 | 100 | 2.8 s | 120 ms | 0 | 143 KB |
+| `/article/[slug]` | 92 (92) | 100 | 100 | 100 | 2.8 s | 45 ms | 0 | 144 KB |
+| `/pricing` | 89 (88–90) | 100 | 100 | 100 | 2.9 s | 173 ms | 0 | 142 KB |
+
+Steps and their effect (median Performance of `/`, `/articles`, article, `/pricing`):
+| Step | Change | Result |
+|---|---|---|
+| Baseline | | 76 / 76 / 73 / 71, initial JS up to 201 KB |
+| P1 | Skew protection off | −8 KB JS, scores within noise |
+| P2 | Nuxt UI CSS only for used components | Entry CSS 31.4 → 24.4 KB gzip |
+| P3 | `UApp` only in admin and auth layouts | 81 / 88 / 83 / 84, −14 KB JS |
+| P4 | Base components on public pages (no tailwind-variants) | 89 / 88 / 91 / 88, JS 179 → 146 KB |
+| P5 | Lazy footer, WhatsApp button and first hero | 92 / 91 / 91 / 87 |
+| — | `content-visibility` on comparison table and footer | `/pricing` TBT 209 → 158 ms |
+| P6 | Preload the Latin Geist font | FCP −150 ms, CLS 0 (final table above) |
+
+Not done: inlining the entry CSS (P7) would add about 24 KB gzip to every HTML response and lose CSS caching across visits for about one point; trimming the 14 KB SSR payload (P8) would not move the score measurably. Removing the display font was not attempted (design decision).
+
+Two caveats when reading these numbers:
+- On localhost every script finishes downloading before first paint, so Lighthouse's simulation counts all 140 KB of JS as a prerequisite of FCP. With applied (devtools) throttling FCP was about 2.0 s instead of 2.7 s. PageSpeed Insights against the production host is the number that counts for acceptance criterion 12.
+- Runs on the shared sandbox vary by ±3 points, so 89 and 91 are within noise of each other.
+
 Targets were revised after the M2 measurement (Performance ≥ 90, initial JS ≤ 200 KB gzip): Nuxt, Vue and the router alone are about 100 KB gzip and Nuxt UI's app providers add about 50 KB, so the original 120 KB budget would require dropping Nuxt UI from public pages. JavaScript is within the new budget; Performance is closed out in M5.
 
 ## 15. Environment and deployment
 - Nitro preset `node-server`; start command `node .output/server/index.mjs`; Node 24 LTS (Node 22 if that is the newest Hostinger offers).
 - Environment variables: `NUXT_SITE_URL`, `NUXT_SUPABASE_URL`, `NUXT_SUPABASE_KEY` (publishable key), `NUXT_SUPABASE_SECRET_KEY`, `NUXT_SMTP_HOST` (`smtp-relay.brevo.com`), `NUXT_SMTP_PORT` (587), `NUXT_SMTP_USER`, `NUXT_SMTP_PASS`, `NUXT_SMTP_FROM`, `NUXT_TURNSTILE_SECRET_KEY`, `NUXT_PUBLIC_TURNSTILE_SITE_KEY`, `NUXT_IP_HASH_SALT`.
+- `NUXT_TRUST_PROXY`: which header holds the visitor IP behind the host's proxy (`x-real-ip`, `cf-connecting-ip` or `xff:N`, counted from the right). Rate limits, Turnstile and the IP hash use it. Without it every visitor shares the proxy's address. `/api/admin/diagnostics/request` shows which header to trust.
+- `NUXT_SITE_URL` and `NUXT_SUPABASE_URL` are read at build time (CSP, image domains); a production build fails without them.
+- `GET /api/health` returns status, database reachability, build id and uptime for uptime monitoring.
+- Test only: `NUXT_DB_QUERY_LOG=true` adds `x-db-queries` headers and lets `x-db-cold: 1` purge the public cache. Never enable it in production.
+- Step-by-step Hostinger guide: [`docs/DEPLOYMENT.md`](DEPLOYMENT.md).
 - Optional: `NUXT_TURNSTILE_VERIFY_URL` points verification at a mock in tests. In development without Turnstile keys, Cloudflare's always-pass test keys are used; in production missing keys or salt make the form return `503` instead of accepting unverified submissions.
 - Supabase migrations versioned in `supabase/migrations`; `seed.sql` creates default settings, the four services, `home` page with default blocks, `contact` and `quotation` forms.
 - Brevo: verify sender domain (SPF, DKIM, DMARC) before go-live.
@@ -546,11 +581,13 @@ Targets were revised after the M2 measurement (Performance ≥ 90, initial JS �
 | M2 Articles | Categories, Articles with TipTap, archive, category archive, search, single article, related, RSS | Article published from admin appears on site with full SEO tags |
 | M3 Pages | Block builder, Home, Services, static pages, Pricing module | Home and service pages fully editable from admin |
 | M4 Engagement | Portfolio, Client logos marquee, Testimonials, FAQ, Form builder, Submissions inbox, Brevo notifications, Turnstile | Contact and Quotation submissions arrive in inbox and email. Done; email delivery through Brevo is verified at deployment (M5) because SMTP is not configured locally |
-| M5 Launch | Sitemap, JSON-LD audit, redirects, performance tuning, accessibility pass, E2E tests, Hostinger deployment | All acceptance criteria below pass on production |
+| M5 Launch | Sitemap, JSON-LD audit, redirects, performance tuning, accessibility pass, E2E tests, Hostinger deployment | All acceptance criteria below pass on production. Code done; production deployment and the checks that need real hosts (Brevo email, Turnstile keys, proxy IP header, Rich Results, PageSpeed) follow `docs/DEPLOYMENT.md` |
 
 ---
 
 ## 17. Acceptance criteria
+Automated checks: `pnpm test:e2e` covers criteria 1–11 and 13 against a production build (see `tests/e2e`). Criterion 10's email delivery and criterion 12 are verified on production after deployment.
+
 1. Admin access requires password + TOTP; an `aal1` session cannot read or write admin data (verified at API and RLS level).
 2. Repeated failed logins are throttled (`429`) after 5 attempts per minute.
 3. Every uploaded raster image is stored as WebP with variants and dimensions.

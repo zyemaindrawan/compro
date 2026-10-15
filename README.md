@@ -13,7 +13,7 @@ Company profile site and admin dashboard for a software agency. Nuxt 4, Supabase
 | M2 Articles: categories, TipTap editor, archive, search, related, RSS, sitemap, 301 redirects | Done |
 | M3 Block builder, home, static pages, services, pricing | Done |
 | M4 Portfolio, clients, testimonials, FAQ, form builder, submissions inbox, Turnstile, email notifications | Done |
-| M5 SEO audit, performance, deployment | Next |
+| M5 Launch: trusted proxy IP, redirects admin, query budgets, SEO audit, E2E suite, performance, health check, deployment guide | Done in code; production deploy pending |
 
 The seeded stats, prices, testimonials, FAQs and page copy are placeholders. Replace them under **Pages**, **Pricing**, **Testimonials** and **FAQs** before launch, and have the privacy policy reviewed. Portfolio items and client logos start empty because they need images.
 
@@ -44,16 +44,23 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
+node scripts/perf/initial-js.mjs     # fails if a public page ships more than 200 KB gzip of JS
 ```
 
-## Deployment (Hostinger Node.js)
+### End-to-end tests
 
-1. Create a Supabase project, run the migrations (`supabase link` then `supabase db push`), and enable TOTP MFA under Authentication → MFA.
-2. Disable public sign-ups in Supabase Authentication settings.
-3. Set the variables from `.env.example` in the Hostinger app settings. Use the production URL for `NUXT_SITE_URL`.
-   - Turnstile: create a widget for the production domain in the Cloudflare dashboard and set `NUXT_PUBLIC_TURNSTILE_SITE_KEY` and `NUXT_TURNSTILE_SECRET_KEY`.
-   - Brevo: create an SMTP key, verify the sender domain (SPF, DKIM, DMARC) and set `NUXT_SMTP_USER`, `NUXT_SMTP_PASS` and `NUXT_SMTP_FROM`.
-   - `NUXT_IP_HASH_SALT`: a long random string. It hashes visitor IPs and signs the form timing token.
-   - Forms return `503` in production until the Turnstile keys and the salt are set.
-4. Build with `pnpm build` and start with `node .output/server/index.mjs`.
-5. Create the first admin with `pnpm admin:create` from a machine that has the production keys.
+The Playwright suite runs against the production build with local Supabase, a Turnstile mock and query counting enabled. It recreates a test admin (`e2e-admin@example.test`) on every run.
+
+```bash
+pnpm db:start
+pnpm build
+pnpm test:e2e
+```
+
+Set `PW_CHROMIUM_PATH` when Playwright's bundled browser is not installed (for example `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium`).
+
+SEO audit of any running site: `node scripts/seo-audit.mjs http://localhost:3100`.
+
+## Deployment
+
+See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for the Hostinger Node.js Web App setup, environment variables, the trusted proxy header and the go-live checklist.

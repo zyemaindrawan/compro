@@ -9,14 +9,14 @@ pnpm dev            # local dev server
 pnpm lint           # eslint
 pnpm typecheck      # vue-tsc
 pnpm test           # vitest unit tests
-pnpm test:e2e       # playwright
+pnpm test:e2e       # playwright against the production build (run pnpm build first)
 pnpm build          # production build (node-server preset)
 pnpm db:start       # local Supabase (Docker)
 pnpm db:reset       # re-apply migrations + seed
 pnpm db:types       # regenerate shared/types/database.ts after a migration
 pnpm admin:create <email> [name]   # create an admin (public sign-up is disabled)
 ```
-Run `pnpm lint && pnpm typecheck && pnpm test` before every commit.
+Run `pnpm lint && pnpm typecheck && pnpm test` before every commit, and `pnpm build && pnpm test:e2e` before pushing changes to pages, auth, forms or queries.
 
 ## Architecture rules
 Layered MVC. Dependencies flow one way:
@@ -27,6 +27,7 @@ Layered MVC. Dependencies flow one way:
 - `server/controllers/` validates input with Zod, calls services/models, throws `createError`.
 - `server/api/**` handlers are one line: call the controller. Server-only modules (models, services, controllers) are imported explicitly; only `server/utils` is auto-imported.
 - Clients: `useDb(event)` for the signed-in user (RLS applies, httpOnly session cookies), `useAnonDb()` for public cached reads so cached data never depends on who requested it. There is no browser Supabase client; do not add one.
+- Client IP: use `clientIp(event)` (`server/utils/client-ip.ts`), never `getRequestIP`. It honours `NUXT_TRUST_PROXY`, and rate limits key on the same value.
 - `useServiceDb()` bypasses RLS. Use it only in the public submit flow (read a form with its `notify_emails`, insert a submission). Everything else goes through `useDb` or `useAnonDb`.
 - `app/` never queries Supabase for content. Use `useFetch`/`$fetch` against `/api/*`. The browser Supabase client is for auth only.
 - `shared/` holds types, Zod schemas, formatters and constants. It imports nothing from `app/` or `server/`.
@@ -35,7 +36,8 @@ Layered MVC. Dependencies flow one way:
 ## Data access
 - No N+1. Never load related data with a query per item inside `for`, `map`, `forEach` or `reduce`. Per-item calls are allowed only where Supabase has no batch API (storage uploads, MFA factors).
 - Load relations with PostgREST embedding in one query. Aggregates come from SQL views or RPC in `supabase/migrations`.
-- List endpoints select explicit columns and always paginate.
+- List endpoints select explicit columns and always paginate. Treat an out-of-range page (`isRangeError`) as an empty page.
+- Query budgets per page are enforced by `tests/e2e/queries.spec.ts` (`NUXT_DB_QUERY_LOG=true`, test only). Update the budget only when a new section needs its own query.
 - Batch writes with array `upsert`.
 - Every schema change is a new migration file. Never edit an applied migration.
 - Every new table gets RLS enabled with policies in the same migration.
@@ -50,7 +52,7 @@ Layered MVC. Dependencies flow one way:
 - Blocks: props schema in `shared/schemas/block.schema.ts`, public component `app/components/blocks/Block*.vue` (wired in `BlockRenderer.vue` with lazy hydration), admin form `app/components/admin/blocks/Edit*.vue` (wired in `BlockEditor.vue`), defaults in `app/utils/block-registry.ts`. Data a block needs is collected by `blockService.requirements` and fetched once per page.
 - Icons: `<UIcon name="i-lucide-…">`. Brand/social icons: `i-simple-icons-…`. Do not install other icon packages.
 - Fonts are self-hosted from `@fontsource-variable/*` imports in `main.css`. Do not add Google Fonts or `@nuxt/fonts`.
-- Public pages must stay light: prefer plain markup over overlay-heavy Nuxt UI components (`UHeader`, `UNavigationMenu`, drawers). Check initial JS with a production build before adding a dependency to a public page.
+- Public pages must stay light. Use `AppContainer`, `BaseButton`, `AppBreadcrumb` and `AppPagination` from `app/components/base` instead of Nuxt UI components; on public pages Nuxt UI is limited to `UIcon`, the lazy mobile-menu slideover and the lazy-hydrated form controls. `<UApp>` lives in the admin and auth layouts only. CI runs `node scripts/perf/initial-js.mjs` and fails above 200 KB gzip per page.
 - Article HTML is sanitized on the server (`content.service.ts`). `v-html` is allowed only in `app/pages/article/**` and `BlockRichText.vue`, both rendering server-sanitized HTML.
 - Styling: Tailwind utilities and Nuxt UI theme tokens in `app.config.ts`. No hard-coded hex colors in components.
 
