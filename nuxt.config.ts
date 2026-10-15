@@ -38,7 +38,7 @@ export default defineNuxtConfig({
 
   site: {
     url: siteUrl,
-    name: 'TokoDesign',
+    name: new URL(siteUrl).host,
     defaultLocale: 'en',
   },
 

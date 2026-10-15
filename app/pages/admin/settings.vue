@@ -47,10 +47,21 @@ useUnsavedGuard(isDirty)
 
 const timezones = Intl.supportedValuesOf('timeZone')
 
+// Renaming the site carries the new name into an untouched title template; "%s" is never rewritten.
+function withSyncedTitleTemplate(input: SettingsUpdateInput): SettingsUpdateInput {
+  const saved = settings.value
+  if (!saved || input.site_name === saved.siteName || input.title_template !== saved.titleTemplate) return input
+  const titleTemplate = saved.titleTemplate
+    .split('%s')
+    .map(part => part.replaceAll(saved.siteName, input.site_name))
+    .join('%s')
+  return { ...input, title_template: titleTemplate }
+}
+
 async function onSubmit(event: FormSubmitEvent<SettingsUpdateInput>) {
   saving.value = true
   try {
-    const updated = await api<SiteSettings>('/api/admin/settings', { method: 'PUT', body: event.data })
+    const updated = await api<SiteSettings>('/api/admin/settings', { method: 'PUT', body: withSyncedTitleTemplate(event.data) })
     settings.value = updated
     state.value = toInput(updated)
     baseline.value = JSON.stringify(state.value)
@@ -120,7 +131,7 @@ defineShortcuts({
           <UFormField
             label="Title template"
             name="title_template"
-            help="%s is replaced by the page title."
+            help="%s is replaced by the page title. Renaming the site updates the name here too."
           >
             <UInput
               v-model="state.title_template"
