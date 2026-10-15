@@ -185,10 +185,6 @@ export default defineNuxtConfig({
     disallow: ['/admin', '/api/admin', '/api/auth'],
   },
 
-  skewProtection: {
-    enabled: false,
-  },
-
   security: {
     nonce: true,
     rateLimiter: false,
@@ -229,5 +225,9 @@ export default defineNuxtConfig({
   sitemap: {
     sources: ['/api/__sitemap__/urls'],
     exclude: ['/admin/**'],
+  },
+
+  skewProtection: {
+    enabled: false,
   },
 })
