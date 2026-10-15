@@ -6,34 +6,26 @@ import type { CategoryDetail, CategorySummary } from '#shared/types/models'
 const DETAIL_COLUMNS = `id, name, slug, description, updated_at, ${SEO_COLUMNS}, og_media_id,
   og:media!categories_og_media_id_fkey(${MEDIA_COLUMNS})` as const
 
-async function counts(db: Db) {
-  const rows = unwrap(await db.from('v_category_counts').select('id, article_count'))
-  return new Map(rows.map(row => [row.id, row.article_count ?? 0]))
-}
-
 async function list(db: Db, options: { withArticlesOnly: boolean }): Promise<CategorySummary[]> {
-  const [rows, articleCounts] = await Promise.all([
-    db.from('categories').select('id, name, slug, description').order('name'),
-    counts(db),
-  ])
-  return unwrap(rows)
-    .map(row => ({ ...row, articleCount: articleCounts.get(row.id) ?? 0 }))
-    .filter(row => !options.withArticlesOnly || row.articleCount > 0)
+  let query = db.from('v_category_counts').select('id, name, slug, description, article_count').order('name')
+  if (options.withArticlesOnly) query = query.gt('article_count', 0)
+  return unwrap(await query).map(row => ({
+    id: row.id ?? '',
+    name: row.name ?? '',
+    slug: row.slug ?? '',
+    description: row.description ?? '',
+    articleCount: row.article_count ?? 0,
+  }))
 }
 
 async function findBySlug(db: Db, slug: string): Promise<CategoryDetail | null> {
-  const [{ data, error }, countRow] = await Promise.all([
-    db.from('categories').select(DETAIL_COLUMNS).eq('slug', slug).maybeSingle(),
-    db.from('v_category_counts').select('article_count').eq('slug', slug).maybeSingle(),
-  ])
+  const { data, error } = await db.from('categories').select(DETAIL_COLUMNS).eq('slug', slug).maybeSingle()
   if (error) throwDbError(error)
-  if (!data) return null
-  return toDetail(data, countRow.data?.article_count ?? 0)
+  return data ? toDetail(data) : null
 }
 
 async function findById(db: Db, id: string): Promise<CategoryDetail> {
-  const data = unwrap(await db.from('categories').select(DETAIL_COLUMNS).eq('id', id).single())
-  return toDetail(data, 0)
+  return toDetail(unwrap(await db.from('categories').select(DETAIL_COLUMNS).eq('id', id).single()))
 }
 
 function toDetail(row: {
@@ -42,13 +34,12 @@ function toDetail(row: {
   slug: string
   description: string
   updated_at: string
-} & SeoRow, articleCount: number): CategoryDetail {
+} & SeoRow): CategoryDetail {
   return {
     id: row.id,
     name: row.name,
     slug: row.slug,
     description: row.description,
-    articleCount,
     updatedAt: row.updated_at,
     seo: toSeoFields(row),
   }

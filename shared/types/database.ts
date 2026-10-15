@@ -478,7 +478,7 @@ isOneToOne: false
           Views: {
             "v_category_counts": {
                   Row: {
-                    "article_count": number | null,"id": string | null,"name": string | null,"slug": string | null
+                    "article_count": number | null,"description": string | null,"id": string | null,"name": string | null,"slug": string | null
                   }
                   ComputedFields: never
                   Relationships: [

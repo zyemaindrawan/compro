@@ -2,7 +2,7 @@ import type { H3Event } from 'h3'
 import { z } from 'zod'
 import { slugSchema } from '#shared/schemas/article.schema'
 import { serviceOrderSchema, serviceSchema } from '#shared/schemas/page.schema'
-import type { ServicePageData } from '#shared/types/models'
+import type { PricingGroup, ServicePageData } from '#shared/types/models'
 import { emptySeo } from '#shared/schemas/seo.schema'
 import { pageModel } from '../models/page.model'
 import { pricingModel } from '../models/pricing.model'
@@ -25,15 +25,15 @@ async function publicShow(event: H3Event): Promise<ServicePageData> {
   const service = await serviceModel.findBySlug(db, slug)
   if (!service) fail(404, 'Service not found.')
 
-  const [pageRow, groups] = await Promise.all([
-    service.page_id ? pageModel.findPublishedById(db, service.page_id) : null,
-    pricingModel.groups(db, { serviceId: service.id, activeOnly: true }),
-  ])
+  const pageRow = service.page_id ? await pageModel.findPublishedById(db, service.page_id) : null
+  const page = pageRow ? await toPublicPage(db, pageRow) : null
+  const ownGroup = (groups: PricingGroup[]) => groups.find(group => group.service.id === service.id)
+  const group = (page && ownGroup(page.data.pricing)) ?? ownGroup(await pricingModel.groups(db, { serviceId: service.id, activeOnly: true }))
 
   return {
     service: { id: service.id, name: service.name, slug: service.slug, summary: service.summary, icon: service.icon },
-    page: pageRow ? await toPublicPage(db, pageRow) : null,
-    pricing: groups[0]?.plans.length ? groups[0] : null,
+    page,
+    pricing: group?.plans.length ? group : null,
   }
 }
 

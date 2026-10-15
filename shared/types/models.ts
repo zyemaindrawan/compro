@@ -151,7 +151,7 @@ export interface CategorySummary {
   articleCount: number
 }
 
-export interface CategoryDetail extends CategorySummary {
+export interface CategoryDetail extends Omit<CategorySummary, 'articleCount'> {
   seo: SeoFields
   updatedAt: string
 }
