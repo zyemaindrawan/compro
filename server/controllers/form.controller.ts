@@ -50,7 +50,7 @@ async function notify(event: H3Event, input: {
   extras: { label: string, value: string }[]
 }) {
   try {
-    const identity = await settingsModel.getMailIdentity(useServiceDb())
+    const identity = await settingsModel.getMailIdentity(useAnonDb())
     const to = input.recipients.length ? input.recipients : [identity.email].filter(Boolean)
     if (!to.length) {
       console.warn('[mail] no recipients for', input.formName)
