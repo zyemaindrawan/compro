@@ -232,6 +232,8 @@ All tables: `id uuid pk default gen_random_uuid()`, `created_at timestamptz defa
 - `fn_related_articles(article_id, limit)` — shares most categories, newest first.
 - `fn_search_articles(query, limit, offset)` — `websearch_to_tsquery` ranked results with total count.
 - `v_dashboard_stats` — counts for articles, submissions by status, last 30 days.
+- `v_submission_counts` — submissions per status for the inbox tabs (admin only).
+- `fn_reorder(table, ids)` — sets `position` for portfolio items, client logos, testimonials and FAQs in one statement. Runs as the caller, so RLS applies.
 - `fn_is_admin()` — `exists (select 1 from admin_profiles where user_id = auth.uid()) and auth.jwt()->>'aal' = 'aal2'`.
 
 ### 5.4 Row Level Security
@@ -242,7 +244,7 @@ All tables: `id uuid pk default gen_random_uuid()`, `created_at timestamptz defa
 | `submissions` | none (insert goes through server with service role after Turnstile) | All, via `fn_is_admin()` |
 | `admin_profiles` | none | Own row |
 
-The service-role key is used only inside `server/` for operations that must bypass RLS (submission insert, cache-safe public reads if needed). It is never exposed to the client.
+The service-role key is used only inside `server/` through `useServiceDb()`, for the public submit flow: reading the form with its `notify_emails` and inserting the submission after validation and Turnstile. It is never exposed to the client.
 
 ---
 
@@ -289,26 +291,31 @@ The service-role key is used only inside `server/` for operations that must bypa
 - Category archive shows category description and its own SEO fields.
 
 ### 6.5 Portfolio
-Card: WebP thumbnail, title, service label, external-link icon. Clicking opens `external_url` in a new tab with `rel="noopener noreferrer"`. Filter chips per service, URL-synced, no page reload.
+Card: WebP thumbnail, title, service label, external-link icon. Clicking opens `external_url` in a new tab with `rel="noopener noreferrer"`. `/portfolio` loads all active items once and filters on the client with chips per service, synced to `?service=`, no page reload. The `portfolio_grid` block shows a fixed selection (limit and optional service) with a link to `/portfolio`, without chips.
 
 ### 6.6 Pricing
 - Tabs: Web Development · Custom Applications · Android Development · Cloud Solutions (from `services`).
 - Each tab: 3–4 plan cards (name, `IDR 12,500,000`, suffix, description, CTA). One plan can be flagged **Popular**.
 - Comparison table below the cards: rows = features (optionally grouped), columns = plans, cells = check / cross / short text.
 - Mobile: cards stack; the table becomes a plan selector + single-column feature list (no horizontal scroll trap).
-- CTA links to `/quote?plan={plan-slug}` which pre-fills the quotation form.
+- CTA links to `/quote?service={service-slug}&plan={plan-slug}`. The quote page shows "You picked: {plan} plan, {service}", pre-selects the service field and stores both slugs with the submission.
 
 ### 6.7 Client logos marquee
 - Image-only logos, grayscale with color on hover (respecting dark mode via `filter`).
-- CSS-only infinite loop (duplicated track, `@keyframes translateX`), speed and autoplay from settings, pause on hover/focus.
-- `prefers-reduced-motion`: static wrapping grid instead of animation.
+- CSS-only infinite loop (duplicated track, `@keyframes translateX`), speed (seconds per loop) and autoplay from settings, pause on hover/focus.
+- Fewer than five logos, autoplay off or `prefers-reduced-motion`: static wrapping row instead of animation. The duplicated track is `aria-hidden` and not focusable.
 
 ### 6.8 Forms
 - `DynamicForm` renders any form from its `form_fields` definition.
 - Supported field types: `text`, `email`, `tel`, `url`, `textarea`, `select`, `radio`, `checkbox`, `checkbox_group`, `number`, `budget_range`, `date`.
 - Validation: Zod schema generated from field definitions, same generator on client and server.
 - Spam protection: Turnstile widget (managed mode), hidden honeypot field, minimum fill time (3 s), rate limit 3 submissions / minute / IP.
-- On success: inline success state with the form's `success_message`; admin notification email sent via Brevo SMTP to `notify_emails` (fallback: settings email). Email failure does not lose the submission.
+  - A missing or rejected Turnstile token returns `422` with a field error; the widget resets.
+  - A filled honeypot, a fill time under 3 s or a forged timing token stores the submission with status `spam`, returns the normal success message and sends no email.
+  - The timing token is issued by `GET /api/public/form-token` and signed with HMAC (`NUXT_IP_HASH_SALT`), so a bot cannot fake the start time. A missing token skips only the timing check.
+  - The Turnstile script loads only on pages that render a form. Forms hydrate when they scroll into view; the submit button stays disabled until then so an early click cannot fall back to a native GET submission.
+- On success: inline success state with the form's `success_message`; admin notification email sent via Brevo SMTP to `notify_emails` (fallback: settings email). Email failure is logged and does not lose the submission. Without SMTP settings (local development) the email is logged instead of sent.
+- Retention: submissions are kept until an admin deletes them. There is no automatic expiry.
 
 ---
 
@@ -331,11 +338,11 @@ Card: WebP thumbnail, title, service label, external-link icon. Clicking opens `
 | Services | CRUD, icon picker (Iconify search), link to detail page, ordering |
 | Pricing | Per service: plans CRUD, features CRUD, feature matrix editor (grid of cells), popular flag, ordering |
 | Portfolio | CRUD, thumbnail, external URL, service, ordering |
-| Client Logos | Upload, name, optional URL, drag ordering, active toggle; marquee settings (autoplay, speed, pause on hover) |
+| Client Logos | Upload, name, optional URL, drag ordering, active toggle. Marquee settings (autoplay, speed, pause on hover) live under Settings |
 | Testimonials | CRUD, avatar, rating, ordering |
 | FAQs | CRUD, group, ordering |
-| Forms | Edit form meta and fields (type, label, placeholder, options, required, width, ordering) |
-| Submissions | Inbox with status filter, detail drawer, status change, internal note, CSV export, mark as spam |
+| Forms | Edit form meta (name, button text, success message, notification emails) and fields (type, label, placeholder, help text, options, min/max, required, width, ordering) with a live preview. Saved field names are locked so older submissions keep matching |
+| Submissions | Inbox with status tabs and counts, form filter, name/email search, bulk status and delete, CSV export (formula-safe, max 5,000 rows); detail page with all answers, status, internal note, reply by email and WhatsApp; new-count badge in the sidebar |
 | Media | Grid library, upload (multi), alt text edit, usage-safe delete, copy URL |
 | Settings | Identity (site name, title template, tagline, logos, favicon, default OG image), Contact (phone, WhatsApp, default WhatsApp message, email, address, map URL, work hours per day), Social links (dynamic list: platform, URL, icon, order, active), Analytics (Umami ID + script URL), Localization (timezone) |
 | Account | Display name, avatar, bio, change password (requires the current password), move 2FA to a new device (verify the new factor before the old one is removed), sign out other sessions |
@@ -351,16 +358,16 @@ Each block type = one Vue component + one Zod props schema + one admin editor fo
 | `image_text` | media, heading, body, CTA, image side |
 | `services_grid` | heading, intro, service ids (or all) |
 | `pricing_table` | service id or all (tabbed) |
-| `portfolio_grid` | heading, limit, service filter, show filter chips |
+| `portfolio_grid` | heading, limit, service filter |
 | `latest_articles` | heading, limit, category id |
-| `client_logos` | heading, use marquee |
-| `testimonials` | heading, ids or limit |
-| `faq` | heading, group or ids (emits FAQPage JSON-LD) |
+| `client_logos` | heading (marquee behaviour comes from settings) |
+| `testimonials` | heading, limit (the first one is shown large) |
+| `faq` | heading, group or all (emits FAQPage JSON-LD) |
 | `stats` | items: value, label |
 | `cta` | heading, body, button label, link |
 | `form` | form key, heading, intro |
 
-Status: `hero`, `rich_text`, `image_text`, `services_grid`, `pricing_table`, `latest_articles`, `stats` and `cta` ship in M3. `portfolio_grid`, `client_logos`, `testimonials`, `faq` and `form` ship in M4 with the modules that own their data.
+Status: all 13 block types ship. `hero`, `rich_text`, `image_text`, `services_grid`, `pricing_table`, `latest_articles`, `stats` and `cta` arrived in M3; `portfolio_grid`, `client_logos`, `testimonials`, `faq` and `form` in M4.
 
 Rules:
 - Blocks below the fold are lazy-hydrated.
@@ -421,7 +428,7 @@ Every article, category, page and service supports: meta title, meta description
 | Authentication | Supabase Auth email + password, called from server routes (`/api/auth/*`) so rate limits apply. Public sign-up is disabled; admins are created with `pnpm admin:create`, which also creates the `admin_profiles` row |
 | 2FA | TOTP MFA mandatory. First login forces enrollment (QR + manual secret). Admin APIs and RLS require `aal2` |
 | Session | Supabase session cookies set by the server only: httpOnly, SameSite=Lax, Secure in production, 12 h lifetime. Changing the password signs out other sessions |
-| Rate limiting | `nuxt-security` rateLimiter: login and MFA 5 req/min/IP, form submit 3 req/min/IP, admin API 60 req/min/IP, uploads 30 req/min/IP, public API 120 req/min/IP. Supabase Auth's own limits stay enabled. The default store is in-memory, which fits a single Hostinger Node process |
+| Rate limiting | `nuxt-security` rateLimiter: login and MFA 5 req/min/IP, form submit 3 req/min/IP, admin API 60 req/min/IP, uploads 30 req/min/IP, public API 120 req/min/IP. Supabase Auth's own limits stay enabled. The default store is in-memory, which fits a single Hostinger Node process. Measured behaviour: the limiter rejects the request after `limit + 1` (the first request only creates the bucket), so form submit allows 4 per minute. It keys on the socket address; behind Hostinger's proxy that may be the proxy for every visitor, so the IP header must be configured during the M5 deployment check |
 | Headers | CSP (nonce-based), HSTS, `X-Content-Type-Options`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, frame-ancestors `none` |
 | Input | Zod validation on every controller; request body size limit 1 MB (uploads 10 MB) |
 | Output | Sanitized HTML only; no `v-html` on unsanitized data |
@@ -493,6 +500,8 @@ All server errors are logged with route, user id (if any) and a request id that 
 - Umami script `defer`, loaded after hydration.
 - Static assets are pre-compressed (`compressPublicAssets`); SSR HTML is compressed with Brotli or gzip by `server/plugins/compress-html.ts`.
 - The public header is plain markup with a CSS-only services menu; Nuxt UI overlay-heavy components stay out of public pages.
+- The client build manifest has prefetch turned off (`build:manifest` hook in `nuxt.config.ts`), so public pages do not download the admin layout in the background. `NuxtLink` still prefetches page chunks on visibility.
+- Forms (`DynamicForm`) hydrate on visibility; the Zod validator and form controls are not in the initial bundle of `/contact` and `/quote`.
 
 ---
 
@@ -505,11 +514,24 @@ All server errors are logged with route, user id (if any) and a request id that 
 
 After M3 (home, `/pricing`, a service page): Performance 73–81, Accessibility 100, Best Practices 100, SEO 100, initial JS 188–196 KB gzip.
 
+After M4 (two Lighthouse runs per page; initial JS counts `modulepreload` and module scripts, gzip):
+
+| Page | Performance | Accessibility | Best practices | SEO | Initial JS |
+|---|---|---|---|---|---|
+| `/` | 71–81 | 100 | 100 | 100 | 195 KB |
+| `/portfolio` | 80–82 | 100 | 100 | 100 | 193 KB |
+| `/contact` | 71–72 | 100 | 93 | 100 | 192 KB |
+| `/quote` | 70–72 | 100 | 93 | 100 | 192 KB |
+| `/services/web-development` | not run | | | | 201 KB |
+
+Best practices on the form pages is 93 only because the sandbox that ran the audit blocks `challenges.cloudflare.com`, which logs a failed request. Before the prefetch and lazy-hydration fixes, the form pages shipped 249 KB and every public page prefetched about 100 KB of admin code. The service page is 1 KB over budget and is part of the M5 performance pass.
+
 Targets were revised after the M2 measurement (Performance ≥ 90, initial JS ≤ 200 KB gzip): Nuxt, Vue and the router alone are about 100 KB gzip and Nuxt UI's app providers add about 50 KB, so the original 120 KB budget would require dropping Nuxt UI from public pages. JavaScript is within the new budget; Performance is closed out in M5.
 
 ## 15. Environment and deployment
 - Nitro preset `node-server`; start command `node .output/server/index.mjs`; Node 24 LTS (Node 22 if that is the newest Hostinger offers).
 - Environment variables: `NUXT_SITE_URL`, `NUXT_SUPABASE_URL`, `NUXT_SUPABASE_KEY` (publishable key), `NUXT_SUPABASE_SECRET_KEY`, `NUXT_SMTP_HOST` (`smtp-relay.brevo.com`), `NUXT_SMTP_PORT` (587), `NUXT_SMTP_USER`, `NUXT_SMTP_PASS`, `NUXT_SMTP_FROM`, `NUXT_TURNSTILE_SECRET_KEY`, `NUXT_PUBLIC_TURNSTILE_SITE_KEY`, `NUXT_IP_HASH_SALT`.
+- Optional: `NUXT_TURNSTILE_VERIFY_URL` points verification at a mock in tests. In development without Turnstile keys, Cloudflare's always-pass test keys are used; in production missing keys or salt make the form return `503` instead of accepting unverified submissions.
 - Supabase migrations versioned in `supabase/migrations`; `seed.sql` creates default settings, the four services, `home` page with default blocks, `contact` and `quotation` forms.
 - Brevo: verify sender domain (SPF, DKIM, DMARC) before go-live.
 - CSP `connect-src` allows Umami Cloud. A self-hosted Umami needs its host added in `nuxt.config.ts`.
@@ -523,7 +545,7 @@ Targets were revised after the M2 measurement (Performance ≥ 90, initial JS �
 | M1 Foundation | Project setup, lint/typecheck/test tooling, Supabase schema + RLS, auth with mandatory TOTP, admin layout, Settings, Media pipeline, public layout, theme toggle, error page | Admin can log in with 2FA, edit settings and upload images that become WebP |
 | M2 Articles | Categories, Articles with TipTap, archive, category archive, search, single article, related, RSS | Article published from admin appears on site with full SEO tags |
 | M3 Pages | Block builder, Home, Services, static pages, Pricing module | Home and service pages fully editable from admin |
-| M4 Engagement | Portfolio, Client logos marquee, Testimonials, FAQ, Form builder, Submissions inbox, Brevo notifications, Turnstile | Contact and Quotation submissions arrive in inbox and email |
+| M4 Engagement | Portfolio, Client logos marquee, Testimonials, FAQ, Form builder, Submissions inbox, Brevo notifications, Turnstile | Contact and Quotation submissions arrive in inbox and email. Done; email delivery through Brevo is verified at deployment (M5) because SMTP is not configured locally |
 | M5 Launch | Sitemap, JSON-LD audit, redirects, performance tuning, accessibility pass, E2E tests, Hostinger deployment | All acceptance criteria below pass on production |
 
 ---

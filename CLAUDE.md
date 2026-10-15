@@ -27,6 +27,7 @@ Layered MVC. Dependencies flow one way:
 - `server/controllers/` validates input with Zod, calls services/models, throws `createError`.
 - `server/api/**` handlers are one line: call the controller. Server-only modules (models, services, controllers) are imported explicitly; only `server/utils` is auto-imported.
 - Clients: `useDb(event)` for the signed-in user (RLS applies, httpOnly session cookies), `useAnonDb()` for public cached reads so cached data never depends on who requested it. There is no browser Supabase client; do not add one.
+- `useServiceDb()` bypasses RLS. Use it only in the public submit flow (read a form with its `notify_emails`, insert a submission). Everything else goes through `useDb` or `useAnonDb`.
 - `app/` never queries Supabase for content. Use `useFetch`/`$fetch` against `/api/*`. The browser Supabase client is for auth only.
 - `shared/` holds types, Zod schemas, formatters and constants. It imports nothing from `app/` or `server/`.
 - Admin endpoints live under `server/api/admin/**` and are guarded by `server/middleware/admin-auth.ts` (requires `aal2`).
@@ -87,7 +88,7 @@ Visual: no purple/blue gradient blobs, no glassmorphism stacks, no sparkle icons
 - Never expose `SUPABASE_SERVICE_KEY`, SMTP or Turnstile secrets to the client (`runtimeConfig` server keys only).
 - Render HTML only after server-side sanitization. No `v-html` on raw input.
 - Validate every request body, query and param with Zod in the controller.
-- Public form submissions: verify Turnstile, check honeypot, rate limit.
+- Public form submissions: verify Turnstile, check honeypot, rate limit. Validate with `buildSubmissionSchema` from `shared/utils/form-validation.ts` on both client and server; do not hand-write per-form schemas.
 
 ## Errors
 - Controllers throw `createError({ statusCode, message, data })`. Validation errors use `422` with `data.fields`.
