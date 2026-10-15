@@ -98,6 +98,8 @@ Visual: no purple/blue gradient blobs, no glassmorphism stacks, no sparkle icons
 - Admin UI surfaces errors with `useToastError`; forms show field-level errors.
 
 ## Git
+- Work on `main` only: commit to `main` and push to `main`. Do not create other branches or pull requests unless asked.
+- GitHub Actions is disabled for this repository; run the checks above locally before pushing.
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `chore:`, `test:`.
 - One concern per commit.
 - Never add `Co-Authored-By` or any other Anthropic/Claude attribution trailer or line to commit messages.
