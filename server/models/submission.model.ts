@@ -67,9 +67,9 @@ async function listAdmin(db: Db, query: SubmissionQuery): Promise<Paginated<Subm
     .order('created_at', { ascending: false })
     .range(from, from + query.perPage - 1)
   const { data, error, count } = await request
-  if (error) throwDbError(error)
+  if (error && !isRangeError(error)) throwDbError(error)
   return {
-    items: (data as unknown as ListRow[]).map(toListItem),
+    items: ((data ?? []) as unknown as ListRow[]).map(toListItem),
     total: count ?? 0,
     page: query.page,
     perPage: query.perPage,

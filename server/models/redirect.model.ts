@@ -41,9 +41,9 @@ async function listAdmin(db: Db, query: RedirectQuery): Promise<Paginated<AdminR
   if (term) request = request.or(`from_path.ilike.%${term}%,to_path.ilike.%${term}%`)
 
   const { data, error, count } = await request
-  if (error) throwDbError(error)
+  if (error && !isRangeError(error)) throwDbError(error)
   return {
-    items: data.map(row => ({
+    items: (data ?? []).map(row => ({
       id: row.id,
       fromPath: row.from_path,
       toPath: row.to_path,

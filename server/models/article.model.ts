@@ -82,10 +82,10 @@ async function listPublished(db: Db, options: { page: number, perPage: number, c
   const { data, error, count } = await query
     .order('published_at', { ascending: false })
     .range(from, from + options.perPage - 1)
-  if (error) throwDbError(error)
+  if (error && !isRangeError(error)) throwDbError(error)
 
   return {
-    items: (data as unknown as SummaryRow[]).map(toSummary),
+    items: ((data ?? []) as unknown as SummaryRow[]).map(toSummary),
     total: count ?? 0,
     page: options.page,
     perPage: options.perPage,
@@ -179,10 +179,10 @@ async function listAdmin(db: Db, query: AdminArticleQuery): Promise<Paginated<Ad
   if (query.q) request = request.ilike('title', `%${query.q.replace(/[%_]/g, m => `\\${m}`)}%`)
 
   const { data, error, count } = await request
-  if (error) throwDbError(error)
+  if (error && !isRangeError(error)) throwDbError(error)
 
   return {
-    items: data.map(row => ({
+    items: (data ?? []).map(row => ({
       id: row.id,
       title: row.title,
       slug: row.slug,

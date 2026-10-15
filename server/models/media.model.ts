@@ -32,10 +32,10 @@ async function list(db: Db, query: MediaListQuery): Promise<Paginated<MediaAsset
   if (query.q) request = request.ilike('alt', `%${query.q.replace(/[%_]/g, m => `\\${m}`)}%`)
 
   const { data, error, count } = await request
-  if (error) throwDbError(error)
+  if (error && !isRangeError(error)) throwDbError(error)
 
   return {
-    items: data.map(row => toMediaAsset(row)),
+    items: (data ?? []).map(row => toMediaAsset(row)),
     total: count ?? 0,
     page: query.page,
     perPage: query.perPage,

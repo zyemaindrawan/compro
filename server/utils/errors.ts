@@ -43,3 +43,7 @@ export function unwrap<T>(result: { data: T, error: SupabaseLikeError | null }):
 export function ensureOk(result: { error: SupabaseLikeError | null }) {
   if (result.error) throwDbError(result.error)
 }
+
+export function isRangeError(error: SupabaseLikeError | null) {
+  return error?.code === 'PGRST103'
+}
