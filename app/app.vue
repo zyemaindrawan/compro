@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url'
+
 const route = useRoute()
 await useLayoutData()
 const { settings } = useSiteSettings()
@@ -20,7 +22,10 @@ useHead({
 })
 
 useHead({
-  link: [{ rel: 'preconnect', href: useRuntimeConfig().public.mediaOrigin }],
+  link: [
+    { rel: 'preconnect', href: useRuntimeConfig().public.mediaOrigin },
+    { rel: 'preload', as: 'font', type: 'font/woff2', href: geistLatin, crossorigin: '' },
+  ],
 })
 
 useSchemaOrg([
