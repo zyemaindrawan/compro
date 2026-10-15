@@ -17,6 +17,7 @@ const links = [
 ]
 
 const isActive = (to: string, match?: RegExp) => (match ?? new RegExp(`^${to}`)).test(route.path)
+const isHome = computed(() => route.path === '/')
 
 watch(() => route.fullPath, () => {
   menuOpen.value = false
@@ -33,6 +34,15 @@ watch(() => route.fullPath, () => {
         class="hidden lg:block"
       >
         <ul class="flex items-center gap-1 text-sm">
+          <li>
+            <NuxtLink
+              to="/"
+              class="block rounded-md px-3 py-2 transition-colors hover:text-highlighted"
+              :class="isHome ? 'text-primary' : 'text-muted'"
+            >
+              Home
+            </NuxtLink>
+          </li>
           <li class="group relative">
             <NuxtLink
               to="/services"
@@ -106,6 +116,15 @@ watch(() => route.fullPath, () => {
       <template #body>
         <nav aria-label="Mobile">
           <ul class="space-y-1">
+            <li>
+              <NuxtLink
+                to="/"
+                class="block rounded-md px-2 py-2 font-medium"
+                :class="isHome ? 'text-primary' : 'text-highlighted'"
+              >
+                Home
+              </NuxtLink>
+            </li>
             <li>
               <NuxtLink
                 to="/services"

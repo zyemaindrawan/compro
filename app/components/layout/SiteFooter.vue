@@ -5,6 +5,7 @@ const hours = computed(() => summarizeWorkHours(settings.value?.workHours ?? [])
 const year = new Date().getFullYear()
 
 const companyLinks = [
+  { label: 'Home', to: '/' },
   { label: 'About', to: '/about' },
   { label: 'Portfolio', to: '/portfolio' },
   { label: 'Pricing', to: '/pricing' },
