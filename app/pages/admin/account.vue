@@ -114,7 +114,7 @@ async function signOutOthers() {
     id="account"
     title="Account & security"
   >
-    <div class="mx-auto max-w-3xl space-y-6 pb-16">
+    <div class="mx-auto w-full max-w-3xl space-y-6 pb-16">
       <UPageCard
         title="Profile"
         description="Shown as the author on articles."

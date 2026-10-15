@@ -98,7 +98,7 @@ defineShortcuts({
       ref="form"
       :schema="settingsUpdateSchema"
       :state="state"
-      class="mx-auto max-w-3xl space-y-6 pb-16"
+      class="mx-auto w-full max-w-3xl space-y-6 pb-16"
       @submit="onSubmit"
     >
       <UPageCard

@@ -99,7 +99,7 @@ async function remove() {
       />
     </template>
 
-    <div class="mx-auto max-w-3xl">
+    <div class="mx-auto w-full max-w-3xl">
       <div
         v-if="status === 'pending' && !categories.length"
         class="space-y-2"

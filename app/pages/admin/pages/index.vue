@@ -107,7 +107,7 @@ watch(createOpen, (open) => {
       />
     </template>
 
-    <div class="mx-auto max-w-3xl space-y-8">
+    <div class="mx-auto w-full max-w-3xl space-y-8">
       <div
         v-if="status === 'pending' && !pages.length"
         class="space-y-2"
