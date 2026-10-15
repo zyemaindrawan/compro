@@ -64,3 +64,5 @@ SEO audit of any running site: `node scripts/seo-audit.mjs http://localhost:3100
 ## Deployment
 
 See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for the Hostinger Node.js Web App setup, environment variables, the trusted proxy header and the go-live checklist.
+
+For a VPS with aaPanel (Nginx + PM2), see [`docs/DEPLOYMENT-AAPANEL.md`](docs/DEPLOYMENT-AAPANEL.md). `scripts/deploy/deploy.sh` builds `main` and switches releases only after a successful build and health check, with automatic rollback.

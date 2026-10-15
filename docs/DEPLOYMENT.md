@@ -3,6 +3,8 @@
 This guide deploys the site to a Hostinger **Node.js Web App** (hPanel) with a hosted Supabase project.
 Steps marked **check in hPanel** depend on screens I could not see while writing this. Follow the labels Hostinger shows if they differ.
 
+Deploying to a VPS with aaPanel instead? Follow [`DEPLOYMENT-AAPANEL.md`](DEPLOYMENT-AAPANEL.md) for the server steps; sections 1, 2, 4 and 6 below still apply.
+
 ## 1. Supabase (production project)
 
 1. Create a project in the region closest to your visitors (Singapore for Indonesia).
