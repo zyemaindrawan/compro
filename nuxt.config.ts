@@ -53,6 +53,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     ipHashSalt: '',
     trustProxy: '',
+    dbQueryLog: false,
     supabase: {
       url: supabaseUrl,
       key: '',
@@ -118,6 +119,7 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'node-server',
+    experimental: { asyncContext: true },
     compressPublicAssets: { gzip: true, brotli: true },
     storage: {
       cache: { driver: 'lru-cache', max: 500 },

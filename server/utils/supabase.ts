@@ -15,6 +15,10 @@ declare module 'h3' {
 
 let anonClient: Db | undefined
 
+function queryLogFetch(resolveEvent?: () => H3Event | undefined) {
+  return dbQueryLogEnabled() ? { fetch: createCountingFetch(resolveEvent) } : {}
+}
+
 export function supabaseConfig() {
   const { url, key, secretKey } = useRuntimeConfig().supabase
   if (!url || !key) throw new Error('Set NUXT_SUPABASE_URL and NUXT_SUPABASE_KEY.')
@@ -42,6 +46,7 @@ export function useDb(event: H3Event): Db {
       },
     },
     auth: { flowType: 'pkce', detectSessionInUrl: false },
+    global: queryLogFetch(() => event),
   })
   return event.context.db
 }
@@ -51,6 +56,7 @@ export function useAnonDb(): Db {
     const { url, key } = supabaseConfig()
     anonClient = createClient<Database>(url, key, {
       auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+      global: queryLogFetch(),
     })
   }
   return anonClient
@@ -64,6 +70,7 @@ export function useServiceDb(): Db {
     if (!secretKey) throw new Error('Set NUXT_SUPABASE_SECRET_KEY.')
     serviceClient = createClient<Database>(url, secretKey, {
       auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+      global: queryLogFetch(),
     })
   }
   return serviceClient
