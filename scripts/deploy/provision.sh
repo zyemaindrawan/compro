@@ -62,8 +62,23 @@ set_env() {
   rm -f "$tmp"
 }
 
+# Strips whitespace, quotes and the bracketed-paste markers some web consoles insert.
 clean_value() {
-  printf '%s' "$1" | tr -d '\r\n\t ' | sed -E "s/^[\"']//; s/[\"']$//; s#/+\$##"
+  printf '%s' "$1" | sed -E $'s/\x1b\\[[0-9;]*[~A-Za-z]//g; s/\\[20[01]~//g' | tr -cd '[:graph:]' | sed -E "s/^[\"']//; s/[\"']$//; s#/+\$##"
+}
+
+# Reduces any pasted Supabase API address (with or without scheme or path) to https://<host>.
+normalize_url() {
+  local value="$1"
+  [[ "$value" == *://* ]] || value="https://$value"
+  value="${value%%\?*}"
+  printf '%s' "$value" | sed -E 's#^https?://([^/]+).*#https://\1#'
+}
+
+describe_url() {
+  local value="$1"
+  [ -n "$value" ] || { echo "input was empty"; return; }
+  [[ "$value" == *supabase.co* ]] || echo "no 'supabase.co' found in the input (length ${#value}); was a key pasted instead?"
 }
 
 # Keeps a valid existing value; otherwise prompts until the input matches the pattern.
@@ -75,8 +90,10 @@ fill_env() {
   while true; do
     if [ -n "$secret" ]; then value="$(ask_secret "$label: ")"; else value="$(ask "$label: ")"; fi
     value="$(clean_value "$value")"
+    [ "$key" = NUXT_SUPABASE_URL ] && value="$(normalize_url "$value")"
     [[ "$value" =~ $pattern ]] && break
     echo "Invalid format for $key (expected: $label). Try again."
+    [ "$key" = NUXT_SUPABASE_URL ] && describe_url "$value"
   done
   set_env "$key" "$value"
 }
