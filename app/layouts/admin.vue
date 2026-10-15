@@ -53,66 +53,71 @@ const userMenu = computed<DropdownMenuItem[][]>(() => [
 </script>
 
 <template>
-  <UDashboardGroup
-    unit="rem"
-    storage="local"
+  <UApp
+    :toaster="{ position: 'bottom-right' }"
+    :tooltip="{ delayDuration: 300 }"
   >
-    <UDashboardSidebar
-      id="admin-sidebar"
-      collapsible
-      :default-size="15"
-      :collapsed-size="4"
-      :ui="{ footer: 'border-t border-default' }"
+    <UDashboardGroup
+      unit="rem"
+      storage="local"
     >
-      <template #header="{ collapsed }">
-        <AppLogo
-          v-if="!collapsed"
-          to="/admin"
-        />
-        <UIcon
-          v-else
-          name="i-lucide-panels-top-left"
-          class="mx-auto size-5 text-primary"
-        />
-      </template>
-
-      <template #default="{ collapsed }">
-        <UNavigationMenu
-          :collapsed="collapsed"
-          :items="navigation[0]"
-          orientation="vertical"
-          tooltip
-        />
-        <UNavigationMenu
-          :collapsed="collapsed"
-          :items="navigation[1]"
-          orientation="vertical"
-          tooltip
-          class="mt-auto"
-        />
-      </template>
-
-      <template #footer="{ collapsed }">
-        <UDropdownMenu
-          :items="userMenu"
-          :content="{ align: 'start', side: 'top' }"
-          class="w-full"
-        >
-          <UButton
-            :avatar="profile?.avatar ? { src: profile.avatar.url, alt: profile.displayName } : undefined"
-            :icon="profile?.avatar ? undefined : 'i-lucide-circle-user'"
-            :label="collapsed ? undefined : profile?.displayName"
-            :square="collapsed"
-            color="neutral"
-            variant="ghost"
-            block
-            trailing-icon="i-lucide-chevrons-up-down"
-            :ui="{ trailingIcon: collapsed ? 'hidden' : 'ms-auto text-dimmed' }"
+      <UDashboardSidebar
+        id="admin-sidebar"
+        collapsible
+        :default-size="15"
+        :collapsed-size="4"
+        :ui="{ footer: 'border-t border-default' }"
+      >
+        <template #header="{ collapsed }">
+          <AppLogo
+            v-if="!collapsed"
+            to="/admin"
           />
-        </UDropdownMenu>
-      </template>
-    </UDashboardSidebar>
+          <UIcon
+            v-else
+            name="i-lucide-panels-top-left"
+            class="mx-auto size-5 text-primary"
+          />
+        </template>
 
-    <slot />
-  </UDashboardGroup>
+        <template #default="{ collapsed }">
+          <UNavigationMenu
+            :collapsed="collapsed"
+            :items="navigation[0]"
+            orientation="vertical"
+            tooltip
+          />
+          <UNavigationMenu
+            :collapsed="collapsed"
+            :items="navigation[1]"
+            orientation="vertical"
+            tooltip
+            class="mt-auto"
+          />
+        </template>
+
+        <template #footer="{ collapsed }">
+          <UDropdownMenu
+            :items="userMenu"
+            :content="{ align: 'start', side: 'top' }"
+            class="w-full"
+          >
+            <UButton
+              :avatar="profile?.avatar ? { src: profile.avatar.url, alt: profile.displayName } : undefined"
+              :icon="profile?.avatar ? undefined : 'i-lucide-circle-user'"
+              :label="collapsed ? undefined : profile?.displayName"
+              :square="collapsed"
+              color="neutral"
+              variant="ghost"
+              block
+              trailing-icon="i-lucide-chevrons-up-down"
+              :ui="{ trailingIcon: collapsed ? 'hidden' : 'ms-auto text-dimmed' }"
+            />
+          </UDropdownMenu>
+        </template>
+      </UDashboardSidebar>
+
+      <slot />
+    </UDashboardGroup>
+  </UApp>
 </template>

@@ -52,16 +52,11 @@ useSeoMeta({
 </script>
 
 <template>
-  <UApp
-    :toaster="{ position: 'bottom-right' }"
-    :tooltip="{ delayDuration: 300 }"
-  >
-    <NuxtLoadingIndicator
-      color="var(--ui-primary)"
-      :height="2"
-    />
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-  </UApp>
+  <NuxtLoadingIndicator
+    color="var(--ui-primary)"
+    :height="2"
+  />
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>

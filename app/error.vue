@@ -39,63 +39,61 @@ const links = [
 </script>
 
 <template>
-  <UApp>
-    <NuxtLayout :name="isAdmin ? 'auth' : 'default'">
-      <UContainer class="py-24 sm:py-32">
-        <div class="max-w-xl space-y-6">
-          <p class="font-mono text-sm text-primary">
-            {{ error.statusCode }}
-          </p>
-          <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
-            {{ heading }}
-          </h1>
-          <p class="text-lg text-muted">
-            {{ message }}
-          </p>
-          <div class="flex flex-wrap gap-3">
-            <UButton
-              v-if="!notFound"
-              label="Try again"
-              icon="i-lucide-rotate-cw"
-              @click="clearError({ redirect: useRoute().fullPath })"
-            />
-            <UButton
-              :label="isAdmin ? 'Back to dashboard' : 'Back to home'"
-              :color="notFound ? 'primary' : 'neutral'"
-              :variant="notFound ? 'solid' : 'outline'"
-              @click="clearError({ redirect: isAdmin ? '/admin' : '/' })"
-            />
-          </div>
-          <nav
-            v-if="notFound && !isAdmin"
-            aria-label="Suggested pages"
-            class="pt-4"
-          >
-            <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-              <li
-                v-for="link in links"
-                :key="link.to"
-              >
-                <ULink
-                  :to="link.to"
-                  class="text-muted underline-offset-4 hover:text-default hover:underline"
-                >
-                  {{ link.label }}
-                </ULink>
-              </li>
-            </ul>
-          </nav>
-          <p
-            v-if="!notFound && settings?.email"
-            class="text-sm text-muted"
-          >
-            Contact: <ULink
-              :to="`mailto:${settings.email}`"
-              class="underline underline-offset-4"
-            >{{ settings.email }}</ULink>
-          </p>
+  <NuxtLayout :name="isAdmin ? 'auth' : 'default'">
+    <UContainer class="py-24 sm:py-32">
+      <div class="max-w-xl space-y-6">
+        <p class="font-mono text-sm text-primary">
+          {{ error.statusCode }}
+        </p>
+        <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
+          {{ heading }}
+        </h1>
+        <p class="text-lg text-muted">
+          {{ message }}
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <UButton
+            v-if="!notFound"
+            label="Try again"
+            icon="i-lucide-rotate-cw"
+            @click="clearError({ redirect: useRoute().fullPath })"
+          />
+          <UButton
+            :label="isAdmin ? 'Back to dashboard' : 'Back to home'"
+            :color="notFound ? 'primary' : 'neutral'"
+            :variant="notFound ? 'solid' : 'outline'"
+            @click="clearError({ redirect: isAdmin ? '/admin' : '/' })"
+          />
         </div>
-      </UContainer>
-    </NuxtLayout>
-  </UApp>
+        <nav
+          v-if="notFound && !isAdmin"
+          aria-label="Suggested pages"
+          class="pt-4"
+        >
+          <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            <li
+              v-for="link in links"
+              :key="link.to"
+            >
+              <ULink
+                :to="link.to"
+                class="text-muted underline-offset-4 hover:text-default hover:underline"
+              >
+                {{ link.label }}
+              </ULink>
+            </li>
+          </ul>
+        </nav>
+        <p
+          v-if="!notFound && settings?.email"
+          class="text-sm text-muted"
+        >
+          Contact: <ULink
+            :to="`mailto:${settings.email}`"
+            class="underline underline-offset-4"
+          >{{ settings.email }}</ULink>
+        </p>
+      </div>
+    </UContainer>
+  </NuxtLayout>
 </template>
