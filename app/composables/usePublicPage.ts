@@ -10,7 +10,7 @@ export async function usePublicPage(publicPath: MaybeRefOrGetter<string>, key: M
   )
 
   if (error.value || !data.value) {
-    throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+    throw pageError(error.value, 'Page not found')
   }
 
   return { page: data, previewing: computed(() => Boolean(previewId.value)) }

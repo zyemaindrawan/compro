@@ -3,7 +3,7 @@ import type { BlockData, ServicePageData } from '#shared/types/models'
 
 const route = useRoute('services-slug')
 const { data, error } = await useFetch<ServicePageData>(() => `/api/public/services/${route.params.slug}`)
-if (error.value || !data.value) throw createError({ statusCode: 404, statusMessage: 'Service not found', fatal: true })
+if (error.value || !data.value) throw pageError(error.value, 'Service not found')
 
 const previewId = computed(() => (typeof route.query.preview === 'string' ? route.query.preview : null))
 const { data: preview } = await useFetch(() => `/api/admin/pages/${previewId.value}/preview`, { immediate: Boolean(previewId.value) })

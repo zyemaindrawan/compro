@@ -13,7 +13,7 @@ const [{ data: category, error }, { data: articles }, { data: categories }] = aw
 ])
 
 if (error.value || !category.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Category not found', fatal: true })
+  throw pageError(error.value, 'Category not found')
 }
 if (page.value > 1 && !articles.value?.items.length) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })

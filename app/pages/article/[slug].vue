@@ -9,11 +9,7 @@ const { data, error } = await useFetch<ArticlePageData>(() => previewId.value
   : `/api/public/articles/${route.params.slug}`)
 
 if (error.value || !data.value) {
-  throw createError({
-    statusCode: error.value?.statusCode === 401 || error.value?.statusCode === 403 ? 404 : error.value?.statusCode ?? 404,
-    statusMessage: 'Article not found',
-    fatal: true,
-  })
+  throw pageError(error.value, 'Article not found')
 }
 
 const article = computed(() => data.value!.article)
