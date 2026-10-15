@@ -13,7 +13,7 @@
     >
       <slot />
     </main>
-    <SiteFooter />
-    <WhatsAppButton />
+    <LazySiteFooter hydrate-on-visible />
+    <LazyWhatsAppButton hydrate-never />
   </div>
 </template>

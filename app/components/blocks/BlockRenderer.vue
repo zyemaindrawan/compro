@@ -32,11 +32,12 @@ function blockProps<T extends BlockType>(block: PageBlock, _type: T) {
       v-for="(block, index) in blocks"
       :key="block.id"
     >
-      <BlockHero
+      <LazyBlockHero
         v-if="block.type === 'hero' && index === 0"
         :block="blockProps(block, 'hero')"
         :data="data"
         first
+        hydrate-on-interaction
       />
       <LazyBlockHero
         v-else-if="block.type === 'hero'"

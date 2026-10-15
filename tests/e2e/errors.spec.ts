@@ -11,13 +11,16 @@ test('a missing page returns 404 with site navigation and no stack trace', async
 })
 
 test('a server error renders the error page with navigation and no stack trace', async ({ page }) => {
-  await page.goto('/')
-  await page.route('**/api/public/pages/about**', route => route.fulfill({
+  await page.goto('/pricing')
+  await page.waitForLoadState('networkidle')
+  await page.route('**/api/public/services/web-development**', route => route.fulfill({
     status: 500,
     contentType: 'application/json',
     body: JSON.stringify({ statusCode: 500, message: 'boom', stack: ['at secret (/srv/app/server.mjs:1:1)'] }),
   }))
-  await page.getByRole('contentinfo').getByRole('link', { name: 'About' }).click()
+  const nav = page.getByRole('navigation', { name: 'Main' })
+  await nav.getByRole('link', { name: 'Services' }).hover()
+  await nav.getByRole('link', { name: 'Web Development' }).click()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Something broke on our side')
   await expect(page.getByText('500', { exact: true })).toBeVisible()
   await expect(page.getByRole('navigation', { name: 'Main' })).toBeVisible()
