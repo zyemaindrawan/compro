@@ -81,7 +81,13 @@ async function remove(db: Db, id: string) {
 }
 
 async function sitemapEntries(db: Db) {
-  return unwrap(await db.from('services').select('slug, updated_at').eq('is_active', true))
+  const rows = unwrap(await db.from('services').select('slug, updated_at, page:pages(noindex, updated_at)').eq('is_active', true))
+  return rows
+    .filter(row => !row.page?.noindex)
+    .map(row => ({
+      slug: row.slug,
+      updated_at: row.page && row.page.updated_at > row.updated_at ? row.page.updated_at : row.updated_at,
+    }))
 }
 
 export const serviceModel = {
