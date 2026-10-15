@@ -486,7 +486,7 @@ isOneToOne: false
                   ]
                 },"v_dashboard_stats": {
                   Row: {
-                    "draft_articles": number | null,"media_files": number | null,"new_submissions": number | null,"published_articles": number | null,"submissions_30d": number | null
+                    "draft_articles": number | null,"has_default_og": boolean | null,"media_files": number | null,"new_submissions": number | null,"published_articles": number | null,"submissions_30d": number | null
                   }
                   ComputedFields: never
                   Relationships: [

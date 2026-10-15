@@ -89,6 +89,15 @@ export interface DashboardStats {
   submissions30d: number
   mediaFiles: number
   latestSubmissions: SubmissionListItem[]
+  checks: LaunchChecks
+}
+
+export interface LaunchChecks {
+  defaultOgImage: boolean
+  smtp: boolean
+  turnstile: boolean
+  ipHashSalt: boolean
+  trustProxy: boolean
 }
 
 export interface MfaFactor {

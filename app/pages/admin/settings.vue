@@ -187,6 +187,15 @@ defineShortcuts({
             help="1200 × 630 works best."
           />
         </div>
+        <UAlert
+          v-if="!state.default_og_media_id"
+          color="warning"
+          variant="subtle"
+          icon="i-lucide-image-off"
+          title="No default social image"
+          description="Pages without their own image are shared on social media and chat apps without a preview. Upload one before launch."
+          class="mt-4"
+        />
       </UPageCard>
 
       <UPageCard

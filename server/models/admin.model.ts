@@ -1,6 +1,6 @@
 import type { Db } from '../utils/supabase'
 import type { ProfileInput } from '#shared/schemas/auth.schema'
-import type { AdminProfile, DashboardStats } from '#shared/types/models'
+import type { AdminProfile } from '#shared/types/models'
 
 const PROFILE_COLUMNS = `user_id, display_name, bio, avatar:media!admin_profiles_avatar_media_id_fkey(${MEDIA_COLUMNS})` as const
 
@@ -26,7 +26,7 @@ async function updateProfile(db: Db, userId: string, input: ProfileInput) {
   ensureOk(await db.from('admin_profiles').update(input).eq('user_id', userId))
 }
 
-async function dashboardStats(db: Db): Promise<Omit<DashboardStats, 'latestSubmissions'>> {
+async function dashboardStats(db: Db) {
   const row = unwrap(await db.from('v_dashboard_stats').select('*').single())
   return {
     publishedArticles: row.published_articles ?? 0,
@@ -34,6 +34,7 @@ async function dashboardStats(db: Db): Promise<Omit<DashboardStats, 'latestSubmi
     newSubmissions: row.new_submissions ?? 0,
     submissions30d: row.submissions_30d ?? 0,
     mediaFiles: row.media_files ?? 0,
+    hasDefaultOg: row.has_default_og ?? false,
   }
 }
 

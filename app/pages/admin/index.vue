@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DashboardStats } from '#shared/types/models'
+import type { DashboardStats, LaunchChecks } from '#shared/types/models'
 
 definePageMeta({ layout: 'admin' })
 useSeoMeta({ title: 'Dashboard' })
@@ -12,6 +12,20 @@ const { data: stats, status } = await useAsyncData<DashboardStats>('admin-dashbo
 const greeting = computed(() => {
   const name = session.state.value.profile?.displayName?.split(' ')[0]
   return name ? `Welcome back, ${name}` : 'Welcome back'
+})
+
+const CHECK_LABELS: Record<keyof LaunchChecks, { label: string, fix: string }> = {
+  defaultOgImage: { label: 'Default social image', fix: 'Upload one under Settings → Identity.' },
+  smtp: { label: 'Email notifications', fix: 'Set NUXT_SMTP_HOST, NUXT_SMTP_USER, NUXT_SMTP_PASS and NUXT_SMTP_FROM.' },
+  turnstile: { label: 'Spam protection', fix: 'Set NUXT_TURNSTILE_SECRET_KEY and NUXT_PUBLIC_TURNSTILE_SITE_KEY.' },
+  ipHashSalt: { label: 'IP hash salt', fix: 'Set NUXT_IP_HASH_SALT to a random string of 16 or more characters.' },
+  trustProxy: { label: 'Visitor IP behind the proxy', fix: 'Set NUXT_TRUST_PROXY. See docs/DEPLOYMENT.md.' },
+}
+
+const missingChecks = computed(() => {
+  const checks = stats.value?.checks
+  if (!checks) return []
+  return (Object.keys(CHECK_LABELS) as (keyof LaunchChecks)[]).filter(key => !checks[key]).map(key => CHECK_LABELS[key])
 })
 
 const shortcuts = [
@@ -30,6 +44,25 @@ const shortcuts = [
       <p class="font-display text-2xl font-semibold text-highlighted">
         {{ greeting }}
       </p>
+
+      <UAlert
+        v-if="missingChecks.length"
+        color="warning"
+        variant="subtle"
+        icon="i-lucide-list-checks"
+        title="Launch checklist"
+      >
+        <template #description>
+          <ul class="mt-1 space-y-1">
+            <li
+              v-for="check in missingChecks"
+              :key="check.label"
+            >
+              <span class="font-medium">{{ check.label }}:</span> {{ check.fix }}
+            </li>
+          </ul>
+        </template>
+      </UAlert>
 
       <div
         v-if="status === 'pending'"
