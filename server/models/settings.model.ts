@@ -66,6 +66,11 @@ async function getSettings(db: Db, options: { activeLinksOnly: boolean }): Promi
   }
 }
 
+async function ping(db: Db) {
+  const { error } = await db.from('site_settings').select('id').eq('id', 1).limit(1)
+  return !error
+}
+
 async function getSiteName(db: Db) {
   const row = unwrap(await db.from('site_settings').select('site_name').eq('id', 1).single())
   return row.site_name
@@ -110,6 +115,7 @@ async function replaceSocialLinks(db: Db, links: SocialLinkInput[]) {
 
 export const settingsModel = {
   getSettings,
+  ping,
   getSiteName,
   getMailIdentity,
   getMediaIds,

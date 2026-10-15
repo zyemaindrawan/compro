@@ -1,3 +1,9 @@
+const isProductionBuild = process.env.NODE_ENV === 'production' && process.argv.includes('build')
+const missingBuildEnv = ['NUXT_SITE_URL', 'NUXT_SUPABASE_URL'].filter(name => !process.env[name])
+if (isProductionBuild && missingBuildEnv.length) {
+  throw new Error(`Set ${missingBuildEnv.join(' and ')} before building: they are baked into the CSP, image domains and site URL.`)
+}
+
 const siteUrl = process.env.NUXT_SITE_URL || 'http://localhost:3000'
 const supabaseUrl = process.env.NUXT_SUPABASE_URL || 'http://127.0.0.1:54321'
 const minute = 60_000
@@ -89,6 +95,9 @@ export default defineNuxtConfig({
     },
     '/api/admin/**': {
       security: { rateLimiter: limit(60) },
+    },
+    '/api/health': {
+      security: { rateLimiter: limit(30) },
     },
     '/api/public/submissions/**': {
       security: {
