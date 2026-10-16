@@ -156,7 +156,7 @@ async function remove() {
               {{ service.name }}
             </button>
             <p class="truncate text-xs text-muted">
-              {{ service.planCount }} {{ service.planCount === 1 ? 'plan' : 'plans' }} · /services/{{ service.slug }}
+              {{ service.planCount }} {{ service.planCount === 1 ? 'plan' : 'plans' }} · /service/{{ service.slug }}
             </p>
           </div>
           <UBadge
@@ -172,7 +172,7 @@ async function remove() {
                 { label: 'Edit details', icon: 'i-lucide-pencil', onSelect: () => openEdit(service) },
                 { label: service.pageId ? 'Edit page' : 'Create page', icon: 'i-lucide-layout-template', onSelect: () => openPage(service) },
                 { label: 'Edit pricing', icon: 'i-lucide-tags', to: `/admin/pricing?service=${service.id}` },
-                { label: 'View', icon: 'i-lucide-external-link', to: `/services/${service.slug}`, target: '_blank' },
+                { label: 'View', icon: 'i-lucide-external-link', to: `/service/${service.slug}`, target: '_blank' },
               ],
               [{ label: 'Delete', icon: 'i-lucide-trash-2', color: 'error', onSelect: () => { deleting = service } }],
             ]"
@@ -218,7 +218,7 @@ async function remove() {
           <SlugInput
             v-model="state.slug"
             :source="state.name"
-            prefix="/services/"
+            prefix="/service/"
             :auto-sync="!editing"
           />
           <UFormField

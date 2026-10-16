@@ -60,7 +60,7 @@ const companyLinks = [
             :key="service.slug"
           >
             <NuxtLink
-              :to="`/services/${service.slug}`"
+              :to="`/service/${service.slug}`"
               class="text-muted hover:text-default"
             >
               {{ service.name }}

@@ -8,7 +8,7 @@ const ADMIN_ROUTES = [
   '/admin/redirects', '/admin/account',
 ]
 
-const PUBLIC_ROUTES = ['/', '/services', '/services/web-development', '/pricing', '/portfolio', '/articles', '/contact', '/quote', '/about']
+const PUBLIC_ROUTES = ['/', '/services', '/service/web-development', '/pricing', '/portfolio', '/articles', '/contact', '/quote', '/about']
 
 const overflow = (page: import('@playwright/test').Page) => page.evaluate(() => {
   const width = document.documentElement.clientWidth

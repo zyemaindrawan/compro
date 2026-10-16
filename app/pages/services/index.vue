@@ -9,7 +9,7 @@ usePageSeo({
 })
 
 useSchemaOrg([defineWebPage({ '@type': 'CollectionPage' })])
-useItemListSchema(services.value.map(service => ({ name: service.name, url: `/services/${service.slug}` })), { name: 'Services' })
+useItemListSchema(services.value.map(service => ({ name: service.name, url: `/service/${service.slug}` })), { name: 'Services' })
 </script>
 
 <template>

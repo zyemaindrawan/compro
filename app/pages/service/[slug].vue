@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { BlockData, ServicePageData } from '#shared/types/models'
 
-const route = useRoute('services-slug')
+const route = useRoute('service-slug')
 const { data, error } = await useFetch<ServicePageData>(() => `/api/public/services/${route.params.slug}`)
 if (error.value || !data.value) throw pageError(error.value, 'Service not found')
 
@@ -30,7 +30,7 @@ useSchemaOrg([
   defineBreadcrumb({
     itemListElement: [
       { name: 'Services', item: '/services' },
-      { name: service.value.name, item: `/services/${service.value.slug}` },
+      { name: service.value.name, item: `/service/${service.value.slug}` },
     ],
   }),
 ])

@@ -59,7 +59,7 @@ async function update(event: H3Event) {
   const previous = await serviceModel.findState(db, id)
   await serviceModel.update(db, id, input, admin.userId)
   if (previous.slug !== input.slug) {
-    await redirectModel.recordMove(db, `/services/${previous.slug}`, `/services/${input.slug}`)
+    await redirectModel.recordMove(db, `/service/${previous.slug}`, `/service/${input.slug}`)
   }
   await cacheService.purgePublic()
   return serviceModel.listAdmin(db)

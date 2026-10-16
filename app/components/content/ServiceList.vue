@@ -16,7 +16,7 @@ defineProps<{
       class="border-b border-default sm:odd:border-e"
     >
       <NuxtLink
-        :to="`/services/${service.slug}`"
+        :to="`/service/${service.slug}`"
         class="group flex h-full flex-col gap-4 py-8"
         :class="index % 2 === 0 ? 'sm:pe-8' : 'sm:ps-8'"
       >

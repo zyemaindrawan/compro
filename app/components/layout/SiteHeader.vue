@@ -63,7 +63,7 @@ watch(() => route.fullPath, () => {
                   :key="service.slug"
                 >
                   <NuxtLink
-                    :to="`/services/${service.slug}`"
+                    :to="`/service/${service.slug}`"
                     class="block rounded-md px-3 py-2 text-default transition-colors hover:bg-elevated"
                   >
                     {{ service.name }}
@@ -136,7 +136,7 @@ watch(() => route.fullPath, () => {
                   :key="service.slug"
                 >
                   <NuxtLink
-                    :to="`/services/${service.slug}`"
+                    :to="`/service/${service.slug}`"
                     class="block py-1.5 text-sm text-muted hover:text-default"
                   >
                     {{ service.name }}

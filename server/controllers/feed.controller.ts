@@ -58,7 +58,7 @@ async function sitemapUrls() {
   ])
   return [
     ...pages.map(page => ({ loc: `/${page.slug}`, lastmod: page.updated_at })),
-    ...services.map(service => ({ loc: `/services/${service.slug}`, lastmod: service.updated_at })),
+    ...services.map(service => ({ loc: `/service/${service.slug}`, lastmod: service.updated_at })),
     ...articles.map(article => ({ loc: `/article/${article.slug}`, lastmod: article.updated_at })),
     ...categories.map(category => ({ loc: `/articles/category/${category.slug}`, lastmod: category.updated_at })),
   ]

@@ -44,7 +44,7 @@ function expectedTypes(path) {
   const types = ['WebSite', 'Organization', 'WebPage']
   if (path.startsWith('/article/')) types.push('Article', 'BreadcrumbList')
   if (ARCHIVE.test(path)) types.push('CollectionPage')
-  if (path.startsWith('/services/') || path.startsWith('/articles/category/')) types.push('BreadcrumbList')
+  if (path.startsWith('/service/') || path.startsWith('/articles/category/')) types.push('BreadcrumbList')
   return types
 }
 
