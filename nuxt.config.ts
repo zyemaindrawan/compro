@@ -134,6 +134,26 @@ export default defineNuxtConfig({
     storage: {
       cache: { driver: 'lru-cache', max: 500 },
     },
+    rollupConfig: {
+      // Replaces Nitro's own filter, so its defaults are repeated. Nuxt's generated lazy-hydration chunk carries
+      // a misplaced pure annotation that Rollup strips anyway.
+      onwarn(warning, warn) {
+        if (['CIRCULAR_DEPENDENCY', 'EVAL'].includes(warning.code ?? '')) return
+        if (warning.message.includes('Unsupported source map comment')) return
+        if (warning.code === 'INVALID_ANNOTATION' && warning.id?.includes('.nuxt/dist/server/')) return
+        warn(warning)
+      },
+    },
+  },
+
+  vite: {
+    $client: {
+      build: {
+        rolldownOptions: {
+          output: { minify: { compress: { dropConsole: true, dropDebugger: true }, mangle: true } },
+        },
+      },
+    },
   },
 
   typescript: {
@@ -186,6 +206,8 @@ export default defineNuxtConfig({
   },
 
   security: {
+    // Its logger removal targets esbuild, which Vite 8 no longer uses; the client minifier drops console calls instead.
+    removeLoggers: false,
     nonce: true,
     rateLimiter: false,
     xssValidator: false,
