@@ -17,6 +17,7 @@ const links = [
 ]
 
 const SERVICES_MATCH = /^\/services?(\/|$)/
+const ABOUT_MATCH = /^\/about(\/|$)/
 
 const isActive = (to: string, match?: RegExp) => (match ?? new RegExp(`^${to}`)).test(route.path)
 const isHome = computed(() => route.path === '/')
@@ -43,6 +44,15 @@ watch(() => route.fullPath, () => {
               :class="isHome ? 'text-primary' : 'text-muted'"
             >
               Home
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink
+              to="/about"
+              class="block rounded-md px-3 py-2 transition-colors hover:text-highlighted"
+              :class="isActive('/about', ABOUT_MATCH) ? 'text-primary' : 'text-muted'"
+            >
+              About
             </NuxtLink>
           </li>
           <li class="group relative">
@@ -123,6 +133,15 @@ watch(() => route.fullPath, () => {
                 :class="isHome ? 'text-primary' : 'text-highlighted'"
               >
                 Home
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink
+                to="/about"
+                class="block rounded-md px-2 py-2 font-medium"
+                :class="isActive('/about', ABOUT_MATCH) ? 'text-primary' : 'text-highlighted'"
+              >
+                About
               </NuxtLink>
             </li>
             <li>
