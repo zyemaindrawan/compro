@@ -5,7 +5,7 @@ import { blockSchema } from './block.schema'
 import { seoSchema } from './seo.schema'
 
 export const RESERVED_PAGE_SLUGS = [
-  'home', 'admin', 'api', 'article', 'articles', 'services', 'pricing', 'portfolio',
+  'home', 'admin', 'api', 'article', 'articles', 'service', 'services', 'pricing', 'portfolio',
   'contact', 'quote', 'rss.xml', 'sitemap.xml', 'robots.txt', '_nuxt', '__nuxt_error',
 ] as const
 

@@ -124,7 +124,7 @@ declare
 begin
   for v_service in select id, name, slug from public.services loop
     insert into public.pages (title, slug, kind, status, meta_description)
-    values (v_service.name, 'services/' || v_service.slug, 'service', 'published', v_details -> v_service.slug ->> 'sub')
+    values (v_service.name, 'service/' || v_service.slug, 'service', 'published', v_details -> v_service.slug ->> 'sub')
     returning id into v_page;
 
     update public.services set page_id = v_page where id = v_service.id;

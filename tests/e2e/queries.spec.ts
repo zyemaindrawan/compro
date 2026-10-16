@@ -17,7 +17,7 @@ const API_BUDGETS: Record<string, number> = {
 
 const PAGE_BUDGETS: [RegExp, number][] = [
   [/^\/$/, PAGE_BASE + 1 + 6],
-  [/^\/services\/[^/]+$/, PAGE_BASE + 4],
+  [/^\/service\/[^/]+$/, PAGE_BASE + 4],
   [/^\/services$/, PAGE_BASE + 1],
   [/^\/articles$/, PAGE_BASE + 2],
   [/^\/articles\/category\/[^/]+$/, PAGE_BASE + 3],

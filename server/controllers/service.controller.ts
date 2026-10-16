@@ -95,7 +95,7 @@ async function createPage(event: H3Event) {
   const pageId = await pageModel.create(db, {
     ...emptySeo(),
     title: service.name,
-    slug: `services/${service.slug}`,
+    slug: `service/${service.slug}`,
     kind: 'service',
     status: 'draft',
     updated_by: admin.userId,

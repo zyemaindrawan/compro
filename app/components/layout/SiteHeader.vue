@@ -16,6 +16,8 @@ const links = [
   { label: 'Contact', to: '/contact' },
 ]
 
+const SERVICES_MATCH = /^\/services?(\/|$)/
+
 const isActive = (to: string, match?: RegExp) => (match ?? new RegExp(`^${to}`)).test(route.path)
 const isHome = computed(() => route.path === '/')
 
@@ -47,7 +49,7 @@ watch(() => route.fullPath, () => {
             <NuxtLink
               to="/services"
               class="flex items-center gap-1 rounded-md px-3 py-2 transition-colors hover:text-highlighted"
-              :class="isActive('/services') ? 'text-primary' : 'text-muted'"
+              :class="isActive('/services', SERVICES_MATCH) ? 'text-primary' : 'text-muted'"
               aria-haspopup="true"
             >
               Services
