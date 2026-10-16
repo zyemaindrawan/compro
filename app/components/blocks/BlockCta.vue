@@ -5,15 +5,15 @@ defineProps<{ block: BlockProps<'cta'> }>()
 </script>
 
 <template>
-  <section class="bg-inverted text-inverted">
+  <section class="border-y border-default bg-elevated">
     <AppContainer class="flex flex-col gap-8 py-16 sm:py-20 lg:flex-row lg:items-end lg:justify-between">
       <div class="max-w-2xl space-y-3">
-        <h2 class="font-display text-3xl font-bold text-balance sm:text-4xl">
+        <h2 class="font-display text-3xl font-bold text-balance text-highlighted sm:text-4xl">
           {{ block.heading }}
         </h2>
         <p
           v-if="block.body"
-          class="text-lg text-pretty opacity-80"
+          class="text-lg text-pretty text-muted"
         >
           {{ block.body }}
         </p>
