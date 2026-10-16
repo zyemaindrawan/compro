@@ -12,12 +12,13 @@ const media = computed(() => (props.block.media_id ? props.data.media[props.bloc
 </script>
 
 <template>
-  <section class="border-b border-default">
+  <section class="relative isolate overflow-hidden border-b border-default">
+    <HeroOrnament />
     <AppContainer
-      class="grid gap-12 py-20 sm:py-28 lg:items-center"
+      class="grid gap-10 py-14 sm:gap-12 sm:py-28 lg:items-center"
       :class="media ? 'lg:grid-cols-2' : ''"
     >
-      <div class="max-w-3xl space-y-6">
+      <div class="max-w-3xl space-y-5 sm:space-y-6">
         <p
           v-if="block.eyebrow"
           class="text-sm font-medium text-primary"
@@ -38,16 +39,18 @@ const media = computed(() => (props.block.media_id ? props.data.media[props.bloc
         </p>
         <div
           v-if="block.primary.label || block.secondary.label"
-          class="flex flex-wrap gap-3"
+          class="flex flex-col gap-3 sm:flex-row sm:flex-wrap"
         >
           <CtaLink
             :link="block.primary"
             trailing-icon="i-lucide-arrow-right"
+            class="w-full justify-center sm:w-auto"
           />
           <CtaLink
             :link="block.secondary"
             color="neutral"
             variant="outline"
+            class="w-full justify-center sm:w-auto"
           />
         </div>
       </div>
