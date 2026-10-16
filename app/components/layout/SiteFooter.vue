@@ -134,11 +134,8 @@ const companyLinks = [
       </address>
     </AppContainer>
 
-    <AppContainer class="flex flex-col gap-2 border-t border-default py-6 text-xs text-muted sm:flex-row sm:justify-between">
+    <AppContainer class="border-t border-default py-6 text-center text-xs text-muted">
       <p>© {{ year }} {{ settings?.siteName }}. All rights reserved.</p>
-      <p v-if="settings?.timezone">
-        Working hours in {{ settings.timezone.replace('_', ' ') }} time.
-      </p>
     </AppContainer>
   </footer>
 </template>
