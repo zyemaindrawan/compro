@@ -147,8 +147,15 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    build: {
+      // Timing notices only report that Nuxt's JS plugins dominate build time; they carry no action.
+      rolldownOptions: { checks: { bundlerTimings: false } },
+    },
     $client: {
       build: {
+        // The rich-text editor chunk (~550 kB, admin editors only) sits above Vite's 500 kB default.
+        // Public pages are held to 200 kB gzip by scripts/perf/initial-js.mjs.
+        chunkSizeWarningLimit: 600,
         rolldownOptions: {
           output: { minify: { compress: { dropConsole: true, dropDebugger: true }, mangle: true } },
         },
