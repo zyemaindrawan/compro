@@ -39,18 +39,16 @@ const media = computed(() => (props.block.media_id ? props.data.media[props.bloc
         </p>
         <div
           v-if="block.primary.label || block.secondary.label"
-          class="flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+          class="flex flex-wrap gap-3"
         >
           <CtaLink
             :link="block.primary"
             trailing-icon="i-lucide-arrow-right"
-            class="w-full justify-center sm:w-auto"
           />
           <CtaLink
             :link="block.secondary"
             color="neutral"
             variant="outline"
-            class="w-full justify-center sm:w-auto"
           />
         </div>
       </div>

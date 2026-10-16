@@ -1,48 +1,69 @@
 <template>
-  <svg
+  <div
     aria-hidden="true"
-    focusable="false"
-    viewBox="0 0 400 240"
-    class="cloud-ornament pointer-events-none absolute end-0 -bottom-8 -z-10 w-56 text-muted sm:top-1/2 sm:bottom-auto sm:w-96 sm:-translate-y-1/2"
+    class="pointer-events-none absolute inset-0 -z-10 text-muted"
   >
-    <g
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1"
+    <svg
+      focusable="false"
+      class="cta-dots absolute inset-0 size-full"
     >
-      <path d="M100 200 a60 60 0 0 1 10 -118 a90 90 0 0 1 170 -20 a70 70 0 0 1 20 138 Z" />
-      <path
-        d="M130 200 a40 40 0 0 1 8 -80 a62 62 0 0 1 118 -14 a48 48 0 0 1 14 94 Z"
-        opacity="0.6"
+      <defs>
+        <pattern
+          id="cta-dots"
+          width="20"
+          height="20"
+          patternUnits="userSpaceOnUse"
+        >
+          <circle
+            cx="1"
+            cy="1"
+            r="1"
+            fill="currentColor"
+          />
+        </pattern>
+      </defs>
+      <rect
+        width="100%"
+        height="100%"
+        fill="url(#cta-dots)"
+        opacity="0.35"
       />
-      <path
-        d="M0 200 H400"
-        stroke-dasharray="2 6"
-        opacity="0.5"
-      />
-    </g>
-    <g fill="var(--ui-primary)">
-      <circle
-        cx="110"
-        cy="82"
-        r="3"
-      />
-      <circle
-        cx="280"
-        cy="62"
-        r="3"
-      />
-      <circle
-        cx="300"
-        cy="200"
-        r="3"
-      />
-    </g>
-  </svg>
+    </svg>
+
+    <svg
+      focusable="false"
+      viewBox="0 0 300 200"
+      class="absolute -end-10 -bottom-16 w-56 opacity-50 sm:-bottom-20 sm:w-72"
+    >
+      <g
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1"
+      >
+        <path d="M50 170 a50 50 0 0 1 8 -98 a78 78 0 0 1 146 -18 a58 58 0 0 1 18 116 Z" />
+        <path
+          d="M80 170 a32 32 0 0 1 6 -64 a50 50 0 0 1 96 -12 a38 38 0 0 1 12 76 Z"
+          opacity="0.6"
+        />
+      </g>
+      <g fill="var(--ui-primary)">
+        <circle
+          cx="58"
+          cy="72"
+          r="3"
+        />
+        <circle
+          cx="204"
+          cy="54"
+          r="3"
+        />
+      </g>
+    </svg>
+  </div>
 </template>
 
 <style scoped>
-.cloud-ornament {
-  opacity: 0.22;
+.cta-dots {
+  mask-image: linear-gradient(to right, transparent 30%, black 85%);
 }
 </style>
