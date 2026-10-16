@@ -3,7 +3,7 @@
     aria-hidden="true"
     focusable="false"
     viewBox="0 0 400 240"
-    class="cloud-ornament pointer-events-none absolute end-0 top-1/2 -z-10 w-72 -translate-y-1/2 text-muted sm:w-96"
+    class="cloud-ornament pointer-events-none absolute end-0 -bottom-8 -z-10 w-56 text-muted sm:top-1/2 sm:bottom-auto sm:w-96 sm:-translate-y-1/2"
   >
     <g
       fill="none"
