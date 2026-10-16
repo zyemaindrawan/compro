@@ -14,6 +14,5 @@
       <slot />
     </main>
     <LazySiteFooter hydrate-on-visible />
-    <LazyWhatsAppButton hydrate-never />
   </div>
 </template>
