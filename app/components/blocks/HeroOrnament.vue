@@ -79,6 +79,7 @@
     </g>
 
     <rect
+      class="hidden md:block"
       x="418"
       y="150"
       width="168"
@@ -90,6 +91,7 @@
       opacity="0.9"
     />
     <g
+      class="hidden md:block"
       font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
       font-size="14"
       fill="currentColor"
