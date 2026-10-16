@@ -7,6 +7,7 @@
       Skip to content
     </a>
     <SiteHeader />
+    <RouteLoading />
     <main
       id="main"
       class="flex-1"

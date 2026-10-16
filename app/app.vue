@@ -58,6 +58,7 @@ useSeoMeta({
 
 <template>
   <NuxtLoadingIndicator
+    v-if="isAdmin"
     color="var(--ui-primary)"
     :height="2"
   />
