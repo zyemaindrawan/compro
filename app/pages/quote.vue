@@ -37,14 +37,10 @@ useSchemaOrg([defineWebPage()])
 <template>
   <AppContainer class="grid gap-12 py-14 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-20">
     <div class="space-y-8">
-      <div class="space-y-3">
-        <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
-          Request a quote
-        </h1>
-        <p class="text-lg text-pretty text-muted">
-          Describe what you need, your timeline and a budget range. We reply within two business days with a written estimate or questions to close the gaps.
-        </p>
-      </div>
+      <PageHeading
+        title="Request a quote"
+        description="Describe what you need, your timeline and a budget range. We reply within two business days with a written estimate or questions to close the gaps."
+      />
 
       <div
         v-if="picked"

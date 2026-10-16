@@ -31,14 +31,10 @@ useItemListSchema(data.value.items.map(item => ({ name: item.title, url: item.ex
 <template>
   <div>
     <AppContainer class="space-y-10 py-14 sm:py-20">
-      <div class="max-w-2xl space-y-3">
-        <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
-          Portfolio
-        </h1>
-        <p class="text-lg text-pretty text-muted">
-          A selection of shipped work. Each project opens the live site or store listing.
-        </p>
-      </div>
+      <PageHeading
+        title="Portfolio"
+        description="A selection of shipped work. Each project opens the live site or store listing."
+      />
 
       <nav
         v-if="data.services.length > 1"

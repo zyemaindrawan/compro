@@ -50,17 +50,10 @@ useItemListSchema(
   >
     <header class="space-y-6">
       <AppBreadcrumb :items="[{ label: 'Articles', to: '/articles' }, { label: category.name }]" />
-      <div class="max-w-2xl space-y-3">
-        <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
-          {{ category.name }}
-        </h1>
-        <p
-          v-if="category.description"
-          class="text-lg text-muted"
-        >
-          {{ category.description }}
-        </p>
-      </div>
+      <PageHeading
+        :title="category.name"
+        :description="category.description"
+      />
       <CategoryNav
         :categories="categories"
         :active="category.slug"

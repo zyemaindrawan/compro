@@ -15,14 +15,10 @@ useSchemaOrg([defineWebPage()])
 <template>
   <div>
     <AppContainer class="space-y-12 py-14 sm:py-20">
-      <div class="max-w-2xl space-y-3">
-        <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
-          Pricing
-        </h1>
-        <p class="text-lg text-muted">
-          Fixed prices for a defined scope, in Indonesian rupiah. Larger work is quoted after a paid discovery week.
-        </p>
-      </div>
+      <PageHeading
+        title="Pricing"
+        description="Fixed prices for a defined scope, in Indonesian rupiah. Larger work is quoted after a paid discovery week."
+      />
       <PricingTable
         v-if="groups.length"
         :groups="groups"

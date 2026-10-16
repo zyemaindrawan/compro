@@ -89,12 +89,10 @@ watch(() => route.fullPath, () => {
 
       <div class="flex items-center gap-1.5">
         <ThemeToggle />
-        <span class="hidden sm:inline-flex">
-          <BaseButton
-            to="/quote"
-            label="Get a quote"
-          />
-        </span>
+        <BaseButton to="/quote">
+          <span class="sm:hidden">Quote</span>
+          <span class="hidden sm:inline">Get a quote</span>
+        </BaseButton>
         <BaseButton
           icon="i-lucide-menu"
           color="neutral"

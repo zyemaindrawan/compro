@@ -14,14 +14,10 @@ useSchemaOrg([defineWebPage({ '@type': 'ContactPage' })])
 <template>
   <AppContainer class="grid gap-12 py-14 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] lg:gap-20">
     <div class="space-y-10">
-      <div class="space-y-3">
-        <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
-          Contact us
-        </h1>
-        <p class="text-lg text-pretty text-muted">
-          Tell us what you want to build and when you need it. We reply within one business day, usually with a few questions or a time to talk.
-        </p>
-      </div>
+      <PageHeading
+        title="Contact us"
+        description="Tell us what you want to build and when you need it. We reply within one business day, usually with a few questions or a time to talk."
+      />
       <ContactDetails />
       <p class="text-sm text-muted">
         Already know the scope?

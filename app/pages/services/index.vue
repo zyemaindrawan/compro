@@ -15,14 +15,10 @@ useItemListSchema(services.value.map(service => ({ name: service.name, url: `/se
 <template>
   <div>
     <AppContainer class="space-y-12 py-14 sm:py-20">
-      <div class="max-w-2xl space-y-3">
-        <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
-          Services
-        </h1>
-        <p class="text-lg text-muted">
-          Four practices, one team. Pick one, or combine them. Most clients start with one project and stay for the next.
-        </p>
-      </div>
+      <PageHeading
+        title="Services"
+        description="Four practices, one team. Pick one, or combine them. Most clients start with one project and stay for the next."
+      />
       <ServiceList
         :services="services"
         heading-level="h2"

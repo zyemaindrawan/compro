@@ -18,9 +18,7 @@ useSchemaOrg([
       width="3xl"
       class="pt-14 sm:pt-20"
     >
-      <h1 class="font-display text-4xl font-bold text-balance text-highlighted sm:text-5xl">
-        {{ page.title }}
-      </h1>
+      <PageHeading :title="page.title" />
     </AppContainer>
     <BlockRenderer
       :blocks="page.blocks"
