@@ -133,5 +133,6 @@
 <style scoped>
 .hero-ornament {
   mask-image: linear-gradient(to bottom, black 55%, transparent);
+  opacity: 0.45;
 }
 </style>
